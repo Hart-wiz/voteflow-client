@@ -2,80 +2,9 @@ import React from 'react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 
-/**
- * Next.js 16 Page Component
- * To ensure zero dependencies and perfect layout matching out-of-the-box (even without
- * global CSS config setups), all custom theme variables have been precisely mapped to 
- * standard Tailwind arbitrary values. 
- * * Paste this directly into your app/page.jsx
- */
 export default function App() {
   return (
     <>
-      {/* Native Google Fonts injection & Custom UI effects.
-        In a full Next.js 16 app, these font imports can be replaced by next/font 
-        in your layout.js, but are included here for a perfect standalone preview.
-      */}
-      <style dangerouslySetInnerHTML={{
-        __html: `
-          @import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
-          @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
-
-          body {
-            background-color: #f8f9ff;
-            color: #0b1c30;
-            font-family: 'Inter', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-          }
-
-          .font-geist { font-family: 'Geist', sans-serif; }
-          .font-inter { font-family: 'Inter', sans-serif; }
-
-          .soft-glow-shadow { box-shadow: 0 2px 4px rgba(0, 74, 198, 0.04); }
-          .floating-shadow { box-shadow: 0 10px 20px rgba(0, 74, 198, 0.08); }
-          
-          .glass-card {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(12px);
-            border: 1px solid #c3c6d7;
-          }
-
-          .btn-primary {
-            background: linear-gradient(180deg, #004ac6 0%, #003ea8 100%);
-            transition: all 200ms ease-in-out;
-          }
-          .btn-primary:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
-          }
-
-          .btn-secondary {
-            border: 1px solid #c3c6d7;
-            background-color: #ffffff;
-            transition: all 200ms ease-in-out;
-          }
-          .btn-secondary:hover {
-            background-color: #eff4ff;
-            transform: translateY(-1px);
-          }
-
-          .interactive-card {
-            transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
-          }
-          .interactive-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 24px rgba(0, 74, 198, 0.1);
-          }
-
-          .bg-grid-pattern {
-            background-image: radial-gradient(#c3c6d7 1px, transparent 1px);
-            background-size: 24px 24px;
-            opacity: 0.3;
-          }
-        `
-      }} />
-
       <div className="flex flex-col min-h-screen">
         <Navbar />
 

@@ -1,5 +1,6 @@
 "use client"
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 
@@ -8,48 +9,6 @@ export default function RegisterPage() {
 
   return (
     <>
-      {/* Native Google Fonts injection & Custom UI effects.
-        In a full Next.js 16 app, these font imports can be replaced by next/font 
-        in your layout.js, but are included here for a perfect standalone preview.
-      */}
-      <style dangerouslySetInnerHTML={{
-        __html: `
-          @import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
-          @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
-
-          body {
-            font-family: 'Inter', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-          }
-
-          .font-geist { font-family: 'Geist', sans-serif; }
-          .font-inter { font-family: 'Inter', sans-serif; }
-
-          .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-          }
-
-          .glass-card {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(226, 232, 240, 0.8);
-          }
-
-          .cta-gradient {
-            background: linear-gradient(to bottom, #004ac6, #003ea8);
-          }
-
-          .soft-glow {
-            box-shadow: 0 2px 4px rgba(0, 74, 198, 0.04);
-          }
-
-          .floating-shadow {
-            box-shadow: 0 10px 20px rgba(11, 28, 48, 0.08);
-          }
-        `
-      }} />
-
       {/* Main Layout Wrapper */}
       <div className="bg-[#f8f9ff] text-[#0b1c30] min-h-screen flex flex-col font-inter">
 
@@ -188,11 +147,11 @@ export default function RegisterPage() {
 
               <p className="mt-[40px] text-center font-inter text-[14px] leading-[1.5] text-[#434655]">
                 Already have an account?{' '}
-                <a className="text-[#004ac6] font-semibold hover:underline" href="#">Sign In</a>
+                <Link className="text-[#004ac6] font-semibold hover:underline" href="/login">Sign In</Link>
               </p>
 
               <p className="mt-[16px] text-center font-geist text-[12px] leading-[1.5] font-semibold text-[#c3c6d7]">
-                By creating an account, you agree to our <a className="underline hover:text-[#434655]" href="#">Terms of Service</a> and <a className="underline hover:text-[#434655]" href="#">Privacy Policy</a>.
+                By creating an account, you agree to our <Link className="underline hover:text-[#434655]" href="#">Terms of Service</Link> and <Link className="underline hover:text-[#434655]" href="#">Privacy Policy</Link>.
               </p>
             </div>
           </div>

@@ -7,45 +7,8 @@ export default function DiscoverPage() {
   const [searchQuery, setSearchQuery] = useState('');
 
   return (
+
     <>
-      {/* Native Google Fonts injection & Custom UI effects.
-        In a full Next.js 16 app, these font imports can be replaced by next/font 
-        in your layout.js, but are included here for a perfect standalone preview.
-      */}
-      <style dangerouslySetInnerHTML={{
-        __html: `
-          @import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
-          @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
-
-          body {
-            font-family: 'Inter', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-          }
-
-          .font-geist { font-family: 'Geist', sans-serif; }
-          .font-inter { font-family: 'Inter', sans-serif; }
-
-          .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-            vertical-align: middle;
-          }
-
-          .soft-glow-card {
-            box-shadow: 0 2px 4px rgba(0, 74, 198, 0.04);
-            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-          }
-          .soft-glow-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 20px rgba(0, 74, 198, 0.08);
-          }
-
-          .gradient-button {
-            background: linear-gradient(180deg, #2563eb 0%, #1d4ed8 100%);
-          }
-        `
-      }} />
-
       {/* Main Layout Wrapper */}
       <div className="bg-[#f8f9ff] text-[#0b1c30] font-inter text-[16px] leading-[1.5] selection:bg-[#dbe1ff] selection:text-[#00174b] min-h-screen flex flex-col">
 

@@ -1,5 +1,6 @@
 "use client"
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 
@@ -8,42 +9,6 @@ export default function SignInPage() {
 
   return (
     <>
-      {/* Native Google Fonts injection & Custom UI effects.
-        In a full Next.js 16 app, these font imports can be replaced by next/font 
-        in your layout.js, but are included here for a perfect standalone preview.
-      */}
-      <style dangerouslySetInnerHTML={{
-        __html: `
-          @import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
-          @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
-
-          body {
-            font-family: 'Inter', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-          }
-
-          .font-geist { font-family: 'Geist', sans-serif; }
-          .font-inter { font-family: 'Inter', sans-serif; }
-
-          .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-          }
-
-          .soft-glow-shadow { 
-            box-shadow: 0 2px 4px rgba(0, 74, 198, 0.04), 0 10px 20px rgba(0, 0, 0, 0.02); 
-          }
-          
-          .auth-card-hover {
-            transition: all 0.3s ease-in-out;
-          }
-          .auth-card-hover:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(0, 74, 198, 0.08);
-          }
-        `
-      }} />
-
       {/* Main Layout Wrapper */}
       <div className="bg-[#f8f9ff] text-[#0b1c30] min-h-screen flex flex-col font-inter">
 
@@ -106,9 +71,9 @@ export default function SignInPage() {
                     <label className="block text-[14px] leading-[1] tracking-[0.01em] font-medium font-geist text-[#0b1c30]" htmlFor="password">
                       Password
                     </label>
-                    <a className="text-[12px] leading-[1] font-semibold font-geist text-[#004ac6] hover:underline" href="#">
+                    <Link className="text-[12px] leading-[1] font-semibold font-geist text-[#004ac6] hover:underline" href="#">
                       Forgot password?
-                    </a>
+                    </Link>
                   </div>
                   <div className="relative group">
                     <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#737686] group-focus-within:text-[#004ac6] transition-colors">lock</span>
@@ -149,7 +114,7 @@ export default function SignInPage() {
               <div className="mt-[2.5rem] pt-[1.5rem] border-t border-[#c3c6d7] text-center">
                 <p className="text-[14px] leading-[1.5] font-normal font-inter text-[#434655]">
                   Don't have an account?{' '}
-                  <a className="text-[#004ac6] font-semibold hover:underline" href="#">Register your organization</a>
+                  <Link className="text-[#004ac6] font-semibold hover:underline" href="/register">Register your organization</Link>
                 </p>
               </div>
             </div>
