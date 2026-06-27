@@ -7,14 +7,14 @@ export function Footer() {
         {/* Brand & Copyright */}
         <div className="flex flex-col gap-4">
           <Link href="/" className="font-geist text-[24px] font-bold leading-[1.3] text-[#0b1c30] flex items-center gap-2">
-            <span className="material-symbols-outlined text-[#004ac6]" style={{ fontVariationSettings: '"FILL" 1' }}>ballot</span>
+            <span className="material-symbols-outlined text-[#004ac6]" style={{ fontVariationSettings: '"FILL" 1' }}>how_to_vote</span>
             VoteFlow
           </Link>
           <p className="font-inter text-[14px] leading-[1.5] text-[#434655] max-w-sm">
             © 2024 VoteFlow. All rights reserved. Secure and transparent voting platform.
           </p>
         </div>
-        
+
         {/* Links */}
         <div className="flex flex-col md:items-end justify-start gap-4">
           <div className="flex flex-wrap gap-x-6 gap-y-2">

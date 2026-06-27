@@ -1,34 +1,33 @@
 import React from 'react';
-import { Navbar } from '@/components/layout/Navbar';
+
 import { Footer } from '@/components/layout/Footer';
 
 export default function App() {
   return (
     <>
       <div className="flex flex-col min-h-screen">
-        <Navbar />
 
         <main className="flex-grow">
           {/* Hero Section */}
           <section className="relative pt-[4rem] pb-[2.5rem] px-[16px] md:px-[48px] overflow-hidden">
             <div className="absolute inset-0 bg-grid-pattern -z-10"></div>
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-gradient-to-b from-[#dbe1ff] to-transparent opacity-40 -z-10 blur-3xl pointer-events-none"></div>
-            
+
             <div className="max-w-[1280px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div className="flex flex-col gap-6 text-center lg:text-left z-10">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#dce9ff] text-[#003ea8] font-geist text-[12px] font-semibold leading-[1] w-fit mx-auto lg:mx-0">
                   <span className="material-symbols-outlined text-[16px]">campaign</span>
                   New: Advanced Monetization Tools
                 </div>
-                
+
                 <h1 className="font-geist text-[36px] md:text-[48px] font-bold leading-[1.2] md:leading-[1.1] tracking-[-0.02em] text-[#0b1c30]">
                   Powering the World's Most <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#004ac6] to-[#712ae2]">Engaging Contests</span>
                 </h1>
-                
+
                 <p className="font-inter text-[18px] leading-[1.6] text-[#434655] max-w-xl mx-auto lg:mx-0">
                   The premium platform for organizations, creators, and brands to host secure, high-stakes voting campaigns. Create free or paid polls in minutes.
                 </p>
-                
+
                 <div className="flex flex-col sm:flex-row items-center gap-4 mt-4 justify-center lg:justify-start">
                   <button className="btn-primary w-full sm:w-auto font-geist text-[14px] font-medium leading-[1] tracking-[0.01em] px-8 py-4 rounded-lg shadow-lg flex items-center justify-center gap-2 md:px-12 md:py-6 text-lg hover:scale-105 transition-all duration-300 soft-glow-shadow bg-[#2563eb] text-[#eeefff]">
                     Create Contest | Poll
@@ -39,7 +38,7 @@ export default function App() {
                     Discover Contests
                   </button>
                 </div>
-                
+
                 <div className="mt-8 flex items-center justify-center lg:justify-start gap-4 text-[#434655]">
                   <div className="flex -space-x-2">
                     <div className="w-8 h-8 rounded-full bg-[#d3e4fe] border-2 border-[#f8f9ff] flex items-center justify-center text-xs font-bold text-[#004ac6]">A</div>
@@ -61,7 +60,7 @@ export default function App() {
                     </div>
                     <div className="bg-[#e5eeff] px-4 py-1 rounded-md text-xs font-medium text-[#004ac6]">Dashboard / Active Campaign</div>
                   </div>
-                  
+
                   {/* Fake UI Body Bento Grid */}
                   <div className="grid grid-cols-2 gap-4 h-full">
                     <div className="col-span-2 bg-[#f8f9ff] rounded-lg border border-[#c3c6d7] p-4 flex flex-col justify-between group-hover:border-[#004ac6]/30 transition-colors">
@@ -79,13 +78,13 @@ export default function App() {
                         </div>
                       </div>
                     </div>
-                    
+
                     <div className="bg-[#f8f9ff] rounded-lg border border-[#c3c6d7] p-4 group-hover:border-[#004ac6]/30 transition-colors flex flex-col justify-center items-center text-center">
                       <span className="material-symbols-outlined text-[#712ae2] text-2xl mb-2" style={{ fontVariationSettings: '"FILL" 1' }}>payments</span>
                       <h4 className="text-xs text-[#434655]">Revenue Generated</h4>
                       <p className="text-lg font-bold text-[#0b1c30] mt-1">$45,290</p>
                     </div>
-                    
+
                     <div className="bg-[#f8f9ff] rounded-lg border border-[#c3c6d7] p-4 group-hover:border-[#004ac6]/30 transition-colors flex flex-col justify-center items-center text-center">
                       <span className="material-symbols-outlined text-[#004ac6] text-2xl mb-2" style={{ fontVariationSettings: '"FILL" 1' }}>group</span>
                       <h4 className="text-xs text-[#434655]">Active Voters</h4>
@@ -119,7 +118,7 @@ export default function App() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
                 <div className="hidden md:block absolute top-12 left-[16%] right-[16%] h-px bg-[#c3c6d7] z-0"></div>
-                
+
                 {/* Step 1 */}
                 <div className="relative z-10 flex flex-col items-center text-center group">
                   <div className="w-24 h-24 rounded-full bg-[#f8f9ff] border-4 border-[#f8f9ff] shadow-sm flex items-center justify-center mb-6 group-hover:border-[#dbe1ff] transition-colors duration-300">
@@ -158,7 +157,7 @@ export default function App() {
                 <p className="font-inter text-[18px] leading-[1.6] text-[#434655] max-w-2xl">Everything you need to run secure, large-scale voting events.</p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 md:grid-rows-2 gap-6 h-auto md:h-[600px]">
-                
+
                 {/* Feature 1: Large Span */}
                 <div className="interactive-card col-span-1 md:col-span-2 md:row-span-1 bg-[#f8f9ff] border border-[#c3c6d7] rounded-xl p-8 flex flex-col md:flex-row gap-6 overflow-hidden relative soft-glow-shadow">
                   <div className="flex-1 z-10">
@@ -168,7 +167,7 @@ export default function App() {
                     <h3 className="font-geist text-[24px] font-semibold leading-[1.3] text-[#0b1c30] mb-3">Real-time Analytics</h3>
                     <p className="font-inter text-[16px] leading-[1.5] text-[#434655]">Watch votes and revenue roll in live. Our dashboard provides deep demographic insights and fraud detection metrics instantly.</p>
                   </div>
-                  
+
                   <div className="flex-1 relative min-h-[150px] md:min-h-0 bg-[#eff4ff] rounded-lg border border-[#c3c6d7]/50 flex items-end p-4">
                     <div className="w-full flex items-end gap-2 h-32">
                       <div className="w-1/4 bg-[#b4c5ff] rounded-t-sm h-[40%]"></div>
@@ -235,7 +234,7 @@ export default function App() {
           </section>
         </main>
 
-        <Footer />
+
       </div>
     </>
   );

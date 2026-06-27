@@ -1,7 +1,7 @@
 "use client"
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Navbar } from '@/components/layout/Navbar';
+
 import { Footer } from '@/components/layout/Footer';
 
 export default function RegisterPage() {
@@ -12,7 +12,7 @@ export default function RegisterPage() {
       {/* Main Layout Wrapper */}
       <div className="bg-[#f8f9ff] text-[#0b1c30] min-h-screen flex flex-col font-inter">
 
-        <Navbar />
+
 
         {/* Main Content: Split Screen Layout */}
         <main className="flex-grow flex flex-col md:flex-row w-full max-w-[1440px] mx-auto overflow-hidden">

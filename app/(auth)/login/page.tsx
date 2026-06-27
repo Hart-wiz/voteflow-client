@@ -1,7 +1,7 @@
 "use client"
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Navbar } from '@/components/layout/Navbar';
+
 import { Footer } from '@/components/layout/Footer';
 
 export default function SignInPage() {
@@ -12,7 +12,6 @@ export default function SignInPage() {
       {/* Main Layout Wrapper */}
       <div className="bg-[#f8f9ff] text-[#0b1c30] min-h-screen flex flex-col font-inter">
 
-        <Navbar />
 
         {/* Main Content Area */}
         <main className="flex-grow flex items-center justify-center py-20 px-4 relative overflow-hidden">
