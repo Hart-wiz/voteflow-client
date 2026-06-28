@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { ArrowDownToLine, CreditCard, History, Wallet } from "lucide-react";
+import { WithdrawModal } from "@/components/withdraw-modal";
 
 export default function WalletPage() {
   return (
@@ -21,10 +22,7 @@ export default function WalletPage() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">$12,450.00</div>
-            <Button variant="secondary" className="w-full mt-4 bg-white text-primary hover:bg-white/90">
-              <ArrowDownToLine className="mr-2 h-4 w-4" />
-              Withdraw Funds
-            </Button>
+            <WithdrawModal />
           </CardContent>
         </Card>
         <Card>

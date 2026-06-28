@@ -1,6 +1,7 @@
 import { Sidebar } from "@/components/layout/sidebar";
 import { MobileSidebar } from "@/components/layout/mobile-sidebar";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { UserNav } from "@/components/layout/user-nav";
 import { Bell, Search } from "lucide-react";
 import Link from "next/link";
 
@@ -50,10 +51,8 @@ export default function DashboardLayout({
 
             <ThemeToggle />
 
-            {/* Avatar */}
-            <div className="h-9 w-9 rounded-full bg-primary/15 flex items-center justify-center font-bold text-primary text-sm cursor-pointer hover:bg-primary/25 transition-colors select-none">
-              JD
-            </div>
+            {/* Avatar / Profile Dropdown */}
+            <UserNav />
           </div>
         </header>
 

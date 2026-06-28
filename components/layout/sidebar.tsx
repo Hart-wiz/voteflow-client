@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useAuthStore } from "@/lib/stores/auth";
 import { cn } from "@/lib/utils";
 import {
   BarChart3,
@@ -11,6 +12,7 @@ import {
   LogOut,
   ShieldCheck,
   Bell,
+  List,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -23,6 +25,7 @@ interface NavItem {
 
 const mainNavItems: NavItem[] = [
   { title: "Overview",      href: "/dashboard", icon: LayoutDashboard },
+  { title: "My Polls",      href: "/dashboard/my-polls", icon: List },
   { title: "Create Poll",   href: "/create",    icon: PlusCircle },
   { title: "Analytics",     href: "/analytics", icon: BarChart3 },
   { title: "Wallet",        href: "/wallet",    icon: CreditCard },
@@ -64,6 +67,18 @@ function NavLink({ item }: { item: NavItem }) {
 }
 
 export function Sidebar({ className }: { className?: string }) {
+  const { user, logout } = useAuthStore();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await logout();
+    router.push("/login");
+  };
+
+  const initials = user?.name 
+    ? user.name.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2)
+    : "U";
+
   return (
     <div className={cn("flex h-full w-64 flex-col border-r bg-background shrink-0", className)}>
       {/* Branding */}
@@ -108,15 +123,16 @@ export function Sidebar({ className }: { className?: string }) {
       <div className="p-3 border-t space-y-2">
         <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-muted/40">
           <div className="h-8 w-8 rounded-full bg-primary/15 flex items-center justify-center font-bold text-primary text-xs shrink-0">
-            JD
+            {initials}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-foreground truncate">John Doe</p>
-            <p className="text-xs text-muted-foreground truncate">john@voteflow.io</p>
+            <p className="text-sm font-semibold text-foreground truncate">{user?.name || "Guest User"}</p>
+            <p className="text-xs text-muted-foreground truncate">{user?.email || "Not logged in"}</p>
           </div>
         </div>
         <Button
           variant="ghost"
+          onClick={handleLogout}
           className="w-full justify-start text-muted-foreground hover:text-foreground hover:bg-muted"
         >
           <LogOut className="mr-2 h-4 w-4" />
