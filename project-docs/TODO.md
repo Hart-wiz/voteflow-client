@@ -15,7 +15,7 @@
 - [ ] **Vote success page** — `/vote-success` with contestant name, poll title, and share button
 - [ ] **Poll creation API call** — Connect multi-step wizard to `pollsApi.create()`
 - [ ] **Withdrawal flow** — Wire "Withdraw Funds" button in wallet to `walletApi.withdraw()` with confirmation modal
-- [ ] **Mobile Navbar** — Hamburger menu for the public Navbar on small screens
+- [x] **Mobile Navbar** — Hamburger menu for the public and dashboard Navbar on small screens
 - [ ] **Image upload** — Poll cover image upload in the create-poll wizard
 
 ## 🟡 Low Priority (Polish)

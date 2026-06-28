@@ -21,19 +21,19 @@
 
 | Route | Status | Notes |
 |---|---|---|
-| `/` | ✅ Complete | Landing page in `(public)` group |
-| `/polls` | ✅ Complete | Connected to `lib/data/polls.ts` |
+| `/` | ✅ Complete | Landing page in `(public)` group (Mobile Responsive) |
+| `/polls` | ✅ Complete | Connected to `lib/data/polls.ts` (Mobile Responsive) |
 | `/polls/[slug]` | ✅ Complete | Real slug lookup, live countdown, vote modal |
 | `/login` | ✅ Complete | Forgot password link wired |
 | `/register` | ✅ Complete | |
 | `/forgot-password` | ✅ Complete | Send + success state |
-| `/dashboard` | ✅ Complete | Stat cards, activity feed |
-| `/create` | ✅ Complete | 3-step wizard |
-| `/wallet` | ✅ Complete | Balance + transaction table |
-| `/analytics` | ✅ Complete | Stats, bar chart, pie chart |
-| `/settings` | ✅ Complete | Profile, Notifications, Billing, Security tabs |
-| `/admin` | ✅ Complete | Flagged content table |
-| `/notifications` | ✅ Complete | Read/unread states |
+| `/dashboard` | ✅ Complete | Stat cards, activity feed (Mobile Responsive) |
+| `/create` | ✅ Complete | 3-step wizard (Mobile Responsive) |
+| `/wallet` | ✅ Complete | Balance + transaction table (Mobile Responsive) |
+| `/analytics` | ✅ Complete | Stats, bar chart, pie chart (Mobile Responsive) |
+| `/settings` | ✅ Complete | Profile, Notifications, Billing, Security tabs (Mobile Responsive) |
+| `/admin` | ✅ Complete | Flagged content table (Mobile Responsive) |
+| `/notifications` | ✅ Complete | Read/unread states (Mobile Responsive) |
 | `404` (app/not-found.tsx) | ✅ Complete | Gradient 404 with CTAs |
 | `/results` | ⚠️ Stubbed | Planned — needs design |
 | `/vote-success` | ⚠️ Planned | Post-vote success page |

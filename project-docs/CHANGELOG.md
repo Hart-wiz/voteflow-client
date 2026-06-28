@@ -41,6 +41,11 @@ All notable changes are documented here.
 - **ADDED** `app/(dashboard)/notifications/page.tsx` — read/unread feed
 - **ADDED** `app/not-found.tsx` — global 404 with gradient text and navigation CTAs
 
+### UI & Responsiveness
+- **ADDED** `components/layout/mobile-sidebar.tsx` — sliding hamburger drawer for mobile dashboard navigation
+- **FIXED** All `(dashboard)` pages — updated grid layouts, table overflow wrappers, and flex directions for mobile screens
+- **FIXED** All `(public)` pages — verified and optimized landing page, discover polls, and individual poll pages for mobile compatibility
+
 ### Pages — Fixed
 - **FIXED** `/login` — forgot password link now routes to `/forgot-password`
 

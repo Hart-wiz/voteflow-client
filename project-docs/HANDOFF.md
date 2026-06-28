@@ -19,6 +19,7 @@ Key changes:
 6. **404 page** — `app/not-found.tsx`
 7. **Forgot password** — `app/(auth)/forgot-password/page.tsx`
 8. **Providers** — `components/providers/providers.tsx` unifies ThemeProvider + ReactQueryProvider
+9. **Mobile Responsive** — All `(public)` and `(dashboard)` pages have been fully optimized for mobile devices, including a hamburger slide-out menu.
 
 ---
 
