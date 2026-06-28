@@ -63,9 +63,9 @@ function NavLink({ item }: { item: NavItem }) {
   );
 }
 
-export function Sidebar() {
+export function Sidebar({ className }: { className?: string }) {
   return (
-    <div className="flex h-full w-64 flex-col border-r bg-background shrink-0">
+    <div className={cn("flex h-full w-64 flex-col border-r bg-background shrink-0", className)}>
       {/* Branding */}
       <div className="flex h-16 items-center px-6 border-b gap-2">
         <span

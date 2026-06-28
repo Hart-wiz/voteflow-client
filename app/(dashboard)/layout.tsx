@@ -1,4 +1,5 @@
 import { Sidebar } from "@/components/layout/sidebar";
+import { MobileSidebar } from "@/components/layout/mobile-sidebar";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Bell, Search } from "lucide-react";
 import Link from "next/link";
@@ -10,20 +11,23 @@ export default function DashboardLayout({
 }) {
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-background">
-      <Sidebar />
+      <Sidebar className="hidden md:flex" />
 
       <div className="flex flex-col flex-1 overflow-hidden">
         {/* Top Header */}
-        <header className="h-16 border-b flex items-center justify-between px-6 bg-background shrink-0 z-10">
-          {/* Left: Search */}
-          <div className="relative hidden md:flex items-center">
-            <Search className="absolute left-3 h-4 w-4 text-muted-foreground" />
+        <header className="h-16 border-b flex items-center justify-between px-4 md:px-6 bg-background shrink-0 z-10">
+          {/* Left: Mobile Menu & Search */}
+          <div className="flex items-center gap-2 md:gap-4">
+            <MobileSidebar />
+            <div className="relative hidden md:flex items-center">
+              <Search className="absolute left-3 h-4 w-4 text-muted-foreground" />
             <input
               type="search"
               placeholder="Search polls, contestants..."
               aria-label="Search dashboard"
               className="pl-9 pr-4 py-1.5 text-sm border border-border rounded-lg bg-muted/40 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary w-64 transition-all"
             />
+            </div>
           </div>
 
           {/* Right: Actions */}
