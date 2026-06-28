@@ -53,9 +53,9 @@ export default function CreatePollPage() {
         <p className="text-muted-foreground mt-1">Set up your poll, add contestants, and start collecting votes.</p>
       </div>
 
-      <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center gap-2">
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${step >= 1 ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>1</div>
+      <div className="flex items-center justify-between mb-8 overflow-x-auto pb-2 text-xs sm:text-sm min-w-max px-2">
+        <div className="flex items-center gap-2 shrink-0">
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold shrink-0 ${step >= 1 ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>1</div>
           <span className={`font-medium ${step >= 1 ? 'text-foreground' : 'text-muted-foreground'}`}>Details</span>
         </div>
         <div className={`h-1 flex-1 mx-4 rounded-full ${step >= 2 ? 'bg-primary' : 'bg-muted'}`}></div>
@@ -100,7 +100,7 @@ export default function CreatePollPage() {
               <div className="space-y-3">
                 <Label>Voting Type</Label>
                 <Tabs value={pollData.type} onValueChange={(v) => setPollData({...pollData, type: v})}>
-                  <TabsList className="grid w-full grid-cols-2">
+                  <TabsList className="flex flex-col sm:grid sm:grid-cols-2 w-full h-auto gap-1 p-1">
                     <TabsTrigger value="free">Free Voting</TabsTrigger>
                     <TabsTrigger value="paid">Paid Voting (Monetized)</TabsTrigger>
                   </TabsList>
@@ -134,8 +134,8 @@ export default function CreatePollPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               {contestants.map((c, i) => (
-                <div key={c.id} className="flex items-center gap-4">
-                  <div className="w-8 font-bold text-muted-foreground">{i + 1}.</div>
+                <div key={c.id} className="flex items-center gap-2 sm:gap-4">
+                  <div className="w-8 font-bold text-muted-foreground shrink-0">{i + 1}.</div>
                   <Input 
                     placeholder="Contestant Name" 
                     value={c.name}

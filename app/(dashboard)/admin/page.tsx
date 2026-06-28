@@ -59,36 +59,38 @@ export default function AdminPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Poll Title</TableHead>
-                <TableHead>Creator</TableHead>
-                <TableHead>Reports</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell className="font-medium">Free Money Giveaway 2026</TableCell>
-                <TableCell>ScamUser99</TableCell>
-                <TableCell><Badge variant="destructive">15 Reports</Badge></TableCell>
-                <TableCell className="text-right">
-                  <Button variant="outline" size="sm" className="mr-2">Review</Button>
-                  <Button variant="destructive" size="sm">Suspend</Button>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">Best Crypto Token to Buy</TableCell>
-                <TableCell>CryptoKing</TableCell>
-                <TableCell><Badge variant="outline" className="text-warning border-warning">5 Reports</Badge></TableCell>
-                <TableCell className="text-right">
-                  <Button variant="outline" size="sm" className="mr-2">Review</Button>
-                  <Button variant="destructive" size="sm">Suspend</Button>
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Poll Title</TableHead>
+                  <TableHead>Creator</TableHead>
+                  <TableHead>Reports</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  <TableCell className="font-medium">Free Money Giveaway 2026</TableCell>
+                  <TableCell>ScamUser99</TableCell>
+                  <TableCell><Badge variant="destructive">15 Reports</Badge></TableCell>
+                  <TableCell className="text-right whitespace-nowrap">
+                    <Button variant="outline" size="sm" className="mr-2">Review</Button>
+                    <Button variant="destructive" size="sm">Suspend</Button>
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">Best Crypto Token to Buy</TableCell>
+                  <TableCell>CryptoKing</TableCell>
+                  <TableCell><Badge variant="outline" className="text-warning border-warning">5 Reports</Badge></TableCell>
+                  <TableCell className="text-right whitespace-nowrap">
+                    <Button variant="outline" size="sm" className="mr-2">Review</Button>
+                    <Button variant="destructive" size="sm">Suspend</Button>
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
     </div>

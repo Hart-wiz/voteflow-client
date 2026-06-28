@@ -59,9 +59,9 @@ export default function AnalyticsPage() {
           <div className="space-y-5">
             {pollPerformance.map((poll) => (
               <div key={poll.name} className="space-y-1.5">
-                <div className="flex justify-between items-baseline text-sm">
-                  <span className="font-medium text-foreground truncate max-w-[60%]">{poll.name}</span>
-                  <div className="flex gap-4 shrink-0 text-right">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-baseline text-sm gap-2 sm:gap-0">
+                  <span className="font-medium text-foreground truncate w-full sm:max-w-[60%]">{poll.name}</span>
+                  <div className="flex gap-4 shrink-0 sm:text-right">
                     <span className="text-muted-foreground">{poll.votes.toLocaleString()} votes</span>
                     <span className="font-semibold text-foreground w-24">{poll.revenue}</span>
                   </div>
@@ -100,8 +100,8 @@ export default function AnalyticsPage() {
             <CardTitle>Revenue by Poll Type</CardTitle>
             <CardDescription>Free vs paid poll revenue breakdown.</CardDescription>
           </CardHeader>
-          <CardContent className="h-52 flex items-center justify-center gap-8">
-            <div className="relative w-32 h-32">
+          <CardContent className="h-auto sm:h-52 py-4 flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-8">
+            <div className="relative w-32 h-32 shrink-0">
               <svg viewBox="0 0 36 36" className="w-32 h-32 -rotate-90">
                 <circle cx="18" cy="18" r="15.9" fill="none" stroke="#e5eeff" strokeWidth="3.5" />
                 <circle

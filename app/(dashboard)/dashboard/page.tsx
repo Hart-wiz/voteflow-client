@@ -61,8 +61,8 @@ export default function DashboardPage() {
         </Card>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-4">
+      <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-7">
+        <Card className="col-span-1 lg:col-span-4">
           <CardHeader>
             <CardTitle>Recent Activity</CardTitle>
             <CardDescription>
@@ -73,19 +73,19 @@ export default function DashboardPage() {
             <div className="space-y-8">
               {[1, 2, 3, 4, 5].map((i) => (
                 <div key={i} className="flex items-center">
-                  <div className="space-y-1">
-                    <p className="text-sm font-medium leading-none">New vote on "Miss Universe Nigeria"</p>
-                    <p className="text-sm text-muted-foreground">
+                  <div className="space-y-1 overflow-hidden pr-4">
+                    <p className="text-sm font-medium leading-none truncate">New vote on "Miss Universe Nigeria"</p>
+                    <p className="text-sm text-muted-foreground truncate">
                       Anonymous user voted for Amaka Eze
                     </p>
                   </div>
-                  <div className="ml-auto font-medium text-success">+$1.50</div>
+                  <div className="ml-auto font-medium text-success shrink-0">+$1.50</div>
                 </div>
               ))}
             </div>
           </CardContent>
         </Card>
-        <Card className="col-span-3">
+        <Card className="col-span-1 lg:col-span-3">
           <CardHeader>
             <CardTitle>Top Performing Polls</CardTitle>
             <CardDescription>

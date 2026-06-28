@@ -61,48 +61,50 @@ export default function WalletPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell className="font-medium">Jun 14, 2026</TableCell>
-                <TableCell>Votes - Miss Universe Nigeria</TableCell>
-                <TableCell><Badge variant="outline" className="bg-success/10 text-success border-success/20">Completed</Badge></TableCell>
-                <TableCell className="text-right text-success">+$450.00</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">Jun 12, 2026</TableCell>
-                <TableCell>Withdrawal to Bank ****1234</TableCell>
-                <TableCell><Badge variant="outline" className="bg-success/10 text-success border-success/20">Completed</Badge></TableCell>
-                <TableCell className="text-right">-$2,000.00</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">Jun 10, 2026</TableCell>
-                <TableCell>Votes - Global Music Awards</TableCell>
-                <TableCell><Badge variant="outline" className="bg-warning/10 text-yellow-600 border-warning/20">Pending</Badge></TableCell>
-                <TableCell className="text-right text-success">+$1,055.10</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">Jun 05, 2026</TableCell>
-                <TableCell>Votes - Miss Universe Nigeria</TableCell>
-                <TableCell><Badge variant="outline" className="bg-success/10 text-success border-success/20">Completed</Badge></TableCell>
-                <TableCell className="text-right text-success">+$890.00</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">Jun 01, 2026</TableCell>
-                <TableCell>Withdrawal to Bank ****1234</TableCell>
-                <TableCell><Badge variant="outline" className="bg-success/10 text-success border-success/20">Completed</Badge></TableCell>
-                <TableCell className="text-right">-$5,400.00</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Description</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Amount</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  <TableCell className="font-medium">Jun 14, 2026</TableCell>
+                  <TableCell>Votes - Miss Universe Nigeria</TableCell>
+                  <TableCell><Badge variant="outline" className="bg-success/10 text-success border-success/20">Completed</Badge></TableCell>
+                  <TableCell className="text-right text-success">+$450.00</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">Jun 12, 2026</TableCell>
+                  <TableCell>Withdrawal to Bank ****1234</TableCell>
+                  <TableCell><Badge variant="outline" className="bg-success/10 text-success border-success/20">Completed</Badge></TableCell>
+                  <TableCell className="text-right">-$2,000.00</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">Jun 10, 2026</TableCell>
+                  <TableCell>Votes - Global Music Awards</TableCell>
+                  <TableCell><Badge variant="outline" className="bg-warning/10 text-yellow-600 border-warning/20">Pending</Badge></TableCell>
+                  <TableCell className="text-right text-success">+$1,055.10</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">Jun 05, 2026</TableCell>
+                  <TableCell>Votes - Miss Universe Nigeria</TableCell>
+                  <TableCell><Badge variant="outline" className="bg-success/10 text-success border-success/20">Completed</Badge></TableCell>
+                  <TableCell className="text-right text-success">+$890.00</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">Jun 01, 2026</TableCell>
+                  <TableCell>Withdrawal to Bank ****1234</TableCell>
+                  <TableCell><Badge variant="outline" className="bg-success/10 text-success border-success/20">Completed</Badge></TableCell>
+                  <TableCell className="text-right">-$5,400.00</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
     </div>

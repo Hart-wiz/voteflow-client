@@ -30,7 +30,7 @@ export default function SettingsPage() {
       </div>
 
       <Tabs defaultValue="profile">
-        <TabsList className="mb-6">
+        <TabsList className="mb-6 flex flex-wrap h-auto w-full justify-start gap-1 p-1">
           <TabsTrigger value="profile" className="gap-2"><User className="h-4 w-4" />Profile</TabsTrigger>
           <TabsTrigger value="notifications" className="gap-2"><Bell className="h-4 w-4" />Notifications</TabsTrigger>
           <TabsTrigger value="billing" className="gap-2"><CreditCard className="h-4 w-4" />Billing</TabsTrigger>
@@ -45,8 +45,8 @@ export default function SettingsPage() {
               <CardDescription>Update your name, email, and public profile details.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6 max-w-lg">
-              <div className="flex items-center gap-4">
-                <div className="h-16 w-16 rounded-full bg-primary/15 flex items-center justify-center font-bold text-primary text-xl">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                <div className="h-16 w-16 rounded-full bg-primary/15 flex items-center justify-center font-bold text-primary text-xl shrink-0">
                   JD
                 </div>
                 <div>
@@ -111,8 +111,8 @@ export default function SettingsPage() {
               <CardDescription>Manage your payout method and withdrawal settings.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4 max-w-lg">
-              <div className="p-4 border border-border rounded-lg flex items-center gap-4 bg-muted/30">
-                <CreditCard className="h-8 w-8 text-primary" />
+              <div className="p-4 border border-border rounded-lg flex flex-col sm:flex-row items-start sm:items-center gap-4 bg-muted/30">
+                <CreditCard className="h-8 w-8 text-primary shrink-0" />
                 <div>
                   <p className="font-medium text-sm">Bank Account ****1234</p>
                   <p className="text-xs text-muted-foreground">Default payout destination · GTB</p>
