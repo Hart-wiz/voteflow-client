@@ -9,31 +9,48 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CheckCircle2, ChevronRight, Loader2, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { POLL_CATEGORIES } from "@/lib/data/polls";
 
 export default function CreatePollPage() {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [pollData, setPollData] = useState({
+  const [pollData, setPollData] = useState<{
+    title: string;
+    description: string;
+    category: string;
+    type: string;
+    price: string;
+    image: File | null;
+    endsAt: string;
+  }>({
     title: "",
     description: "",
+    category: "",
     type: "free",
     price: "",
+    image: null,
+    endsAt: "",
   });
 
-  const [contestants, setContestants] = useState([{ id: 1, name: "" }]);
+  const [contestants, setContestants] = useState<{
+    id: number;
+    name: string;
+    description: string;
+    image: File | null;
+  }[]>([{ id: 1, name: "", description: "", image: null }]);
 
   const handleAddContestant = () => {
-    setContestants([...contestants, { id: Date.now(), name: "" }]);
+    setContestants([...contestants, { id: Date.now(), name: "", description: "", image: null }]);
   };
 
   const handleRemoveContestant = (id: number) => {
     setContestants(contestants.filter(c => c.id !== id));
   };
 
-  const handleContestantChange = (id: number, name: string) => {
-    setContestants(contestants.map(c => c.id === id ? { ...c, name } : c));
+  const handleContestantChange = (id: number, field: string, value: any) => {
+    setContestants(contestants.map(c => c.id === id ? { ...c, [field]: value } : c));
   };
 
   const handlePublish = () => {
@@ -97,6 +114,51 @@ export default function CreatePollPage() {
                 />
               </div>
 
+              <div className="space-y-2">
+                <Label htmlFor="category">Category</Label>
+                <div className="relative">
+                  <select
+                    id="category"
+                    value={pollData.category}
+                    onChange={(e) => setPollData({...pollData, category: e.target.value})}
+                    className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 appearance-none"
+                  >
+                    <option value="" disabled>Select a category...</option>
+                    {POLL_CATEGORIES.map((cat) => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                  </select>
+                  <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none text-[18px]">
+                    expand_more
+                  </span>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="image">Banner Image</Label>
+                <Input 
+                  id="image" 
+                  type="file" 
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0] || null;
+                    setPollData({...pollData, image: file});
+                  }}
+                  className="cursor-pointer"
+                />
+                <p className="text-xs text-muted-foreground">Upload a high-quality cover image for your poll.</p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="endsAt">Poll End Date & Time</Label>
+                <Input 
+                  id="endsAt" 
+                  type="datetime-local" 
+                  value={pollData.endsAt}
+                  onChange={(e) => setPollData({...pollData, endsAt: e.target.value})}
+                />
+              </div>
+
               <div className="space-y-3">
                 <Label>Voting Type</Label>
                 <Tabs value={pollData.type} onValueChange={(v) => setPollData({...pollData, type: v})}>
@@ -134,17 +196,43 @@ export default function CreatePollPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               {contestants.map((c, i) => (
-                <div key={c.id} className="flex items-center gap-2 sm:gap-4">
-                  <div className="w-8 font-bold text-muted-foreground shrink-0">{i + 1}.</div>
-                  <Input 
-                    placeholder="Contestant Name" 
-                    value={c.name}
-                    onChange={(e) => handleContestantChange(c.id, e.target.value)}
-                    className="flex-1"
-                  />
-                  <Button variant="ghost" size="icon" onClick={() => handleRemoveContestant(c.id)} disabled={contestants.length === 1} className="text-destructive">
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                <div key={c.id} className="relative p-4 border rounded-lg space-y-4 bg-card/50">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-semibold">Contestant {i + 1}</h4>
+                    <Button variant="ghost" size="icon" onClick={() => handleRemoveContestant(c.id)} disabled={contestants.length === 1} className="text-destructive h-8 w-8">
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label>Name</Label>
+                      <Input 
+                        placeholder="Contestant Name" 
+                        value={c.name}
+                        onChange={(e) => handleContestantChange(c.id, 'name', e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Image</Label>
+                      <Input 
+                        type="file" 
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0] || null;
+                          handleContestantChange(c.id, 'image', file);
+                        }}
+                        className="cursor-pointer"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Brief Description</Label>
+                    <Input 
+                      placeholder="e.g. Actor, Model, Tech Lead" 
+                      value={c.description}
+                      onChange={(e) => handleContestantChange(c.id, 'description', e.target.value)}
+                    />
+                  </div>
                 </div>
               ))}
               <Button variant="outline" onClick={handleAddContestant} className="w-full mt-4 border-dashed border-2">
@@ -171,11 +259,25 @@ export default function CreatePollPage() {
                 <div>
                   <h3 className="font-bold text-lg">{pollData.title}</h3>
                   {pollData.description && <p className="text-muted-foreground">{pollData.description}</p>}
+                  {pollData.image && (
+                    <div className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
+                      <span className="material-symbols-outlined text-[16px]">image</span>
+                      <span>{pollData.image.name}</span>
+                    </div>
+                  )}
                 </div>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <span className="text-muted-foreground">Voting Type:</span>
                     <p className="font-medium capitalize">{pollData.type}</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Category:</span>
+                    <p className="font-medium">{pollData.category || "None selected"}</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Ends At:</span>
+                    <p className="font-medium">{pollData.endsAt ? new Date(pollData.endsAt).toLocaleString() : "Not set"}</p>
                   </div>
                   {pollData.type === 'paid' && (
                     <div>
