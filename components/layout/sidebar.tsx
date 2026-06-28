@@ -24,17 +24,17 @@ interface NavItem {
 }
 
 const mainNavItems: NavItem[] = [
-  { title: "Overview",      href: "/dashboard", icon: LayoutDashboard },
-  { title: "My Polls",      href: "/dashboard/my-polls", icon: List },
-  { title: "Create Poll",   href: "/create",    icon: PlusCircle },
-  { title: "Analytics",     href: "/analytics", icon: BarChart3 },
-  { title: "Wallet",        href: "/wallet",    icon: CreditCard },
+  { title: "Overview", href: "/dashboard", icon: LayoutDashboard },
+  { title: "My Polls", href: "/my-polls", icon: List },
+  { title: "Create Poll", href: "/create", icon: PlusCircle },
+  { title: "Analytics", href: "/analytics", icon: BarChart3 },
+  { title: "Wallet", href: "/wallet", icon: CreditCard },
 ];
 
 const secondaryNavItems: NavItem[] = [
   { title: "Notifications", href: "/notifications", icon: Bell, badge: "3" },
-  { title: "Admin Console", href: "/admin",          icon: ShieldCheck },
-  { title: "Settings",      href: "/settings",       icon: Settings },
+  { title: "Admin Console", href: "/admin", icon: ShieldCheck },
+  { title: "Settings", href: "/settings", icon: Settings },
 ];
 
 function NavLink({ item }: { item: NavItem }) {
@@ -75,7 +75,7 @@ export function Sidebar({ className }: { className?: string }) {
     router.push("/login");
   };
 
-  const initials = user?.name 
+  const initials = user?.name
     ? user.name.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2)
     : "U";
 
