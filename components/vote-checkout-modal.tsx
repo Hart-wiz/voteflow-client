@@ -11,17 +11,18 @@ import { toast } from "sonner";
 interface VoteCheckoutModalProps {
   isOpen: boolean;
   onClose: () => void;
-  contestantName: string;
-  pollName: string;
-  pricePerVote?: number; // if undefined, it's a free poll
+  contestant: string;
+  pollTitle: string;
+  pricePerVote?: number;
+  isPaid?: boolean;
 }
 
-export function VoteCheckoutModal({ isOpen, onClose, contestantName, pollName, pricePerVote }: VoteCheckoutModalProps) {
+export function VoteCheckoutModal({ isOpen, onClose, contestant, pollTitle, pricePerVote, isPaid }: VoteCheckoutModalProps) {
   const [quantity, setQuantity] = useState(1);
   const [isProcessing, setIsProcessing] = useState(false);
   const [email, setEmail] = useState("");
 
-  const isFree = pricePerVote === undefined || pricePerVote === 0;
+  const isFree = !isPaid || pricePerVote === undefined || pricePerVote === 0;
   const total = isFree ? 0 : quantity * (pricePerVote || 0);
 
   const handleVote = () => {
@@ -35,7 +36,7 @@ export function VoteCheckoutModal({ isOpen, onClose, contestantName, pollName, p
     // Simulate API call / Paystack flow
     setTimeout(() => {
       setIsProcessing(false);
-      toast.success(`Successfully cast ${quantity} vote(s) for ${contestantName}!`, {
+      toast.success(`Successfully cast ${quantity} vote(s) for ${contestant}!`, {
         description: isFree ? "Thank you for voting." : `Payment of $${total.toFixed(2)} processed.`,
       });
       onClose();
@@ -48,9 +49,9 @@ export function VoteCheckoutModal({ isOpen, onClose, contestantName, pollName, p
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Vote for {contestantName}</DialogTitle>
+          <DialogTitle>Vote for {contestant}</DialogTitle>
           <DialogDescription>
-            {pollName}
+            {pollTitle}
           </DialogDescription>
         </DialogHeader>
 

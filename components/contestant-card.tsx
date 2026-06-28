@@ -1,64 +1,92 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { CheckCircle2 } from "lucide-react";
+"use client";
+
+import type { Contestant, Poll } from "@/lib/types";
+import { cn } from "@/lib/utils";
+import { useState } from "react";
+import { VoteCheckoutModal } from "@/components/vote-checkout-modal";
 
 interface ContestantCardProps {
-  id: string;
-  name: string;
-  imageUrl?: string;
-  votes: number;
+  contestant: Contestant;
+  poll: Poll;
   rank?: number;
-  onVote: (id: string) => void;
-  isWinning?: boolean;
+  className?: string;
 }
 
-export function ContestantCard({ id, name, imageUrl, votes, rank, onVote, isWinning }: ContestantCardProps) {
-  return (
-    <Card className="relative overflow-hidden group hover:border-primary/50 transition-all shadow-sm">
-      {rank && (
-        <div className="absolute top-2 left-2 z-10">
-          <Badge variant={rank === 1 ? "default" : "secondary"} className="h-8 w-8 rounded-full flex items-center justify-center p-0 text-sm font-bold shadow-md">
-            #{rank}
-          </Badge>
-        </div>
-      )}
-      
-      {isWinning && (
-        <div className="absolute top-2 right-2 z-10 text-success">
-          <CheckCircle2 className="h-6 w-6 bg-white rounded-full" />
-        </div>
-      )}
+export function ContestantCard({ contestant, poll, rank, className }: ContestantCardProps) {
+  const [modalOpen, setModalOpen] = useState(false);
 
-      <div className="aspect-square bg-muted relative overflow-hidden">
-        {imageUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img 
-            src={imageUrl} 
-            alt={name} 
-            className="w-full h-full object-cover transition-transform group-hover:scale-105"
+  return (
+    <>
+      <div className={cn("bg-white rounded-xl border border-[#c3c6d7] flex flex-col overflow-hidden hover-lift group soft-glow-shadow", className)}>
+        {/* Image */}
+        <div className="h-48 relative overflow-hidden bg-[#eff4ff]">
+          <img
+            src={contestant.image}
+            alt={contestant.name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900">
-            <span className="text-4xl font-bold text-slate-300 dark:text-slate-700">{name.charAt(0)}</span>
+          {rank && rank <= 3 && (
+            <div className="absolute top-3 left-3">
+              <span className={cn(
+                "w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shadow",
+                rank === 1 ? "bg-[#f5a623] text-white" :
+                rank === 2 ? "bg-[#9b9b9b] text-white" :
+                "bg-[#c47a3a] text-white"
+              )}>
+                #{rank}
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Content */}
+        <div className="p-5 flex-grow flex flex-col">
+          <div className="mb-3 flex-grow">
+            <h3 className="font-geist text-[18px] font-semibold leading-[1.3] text-[#0b1c30] mb-1">{contestant.name}</h3>
+            <p className="font-inter text-[13px] text-[#004ac6] font-medium mb-2">by {contestant.author}</p>
+            <p className="font-inter text-[13px] leading-[1.5] text-[#434655] line-clamp-3">{contestant.description}</p>
           </div>
-        )}
+
+          {/* Vote Progress */}
+          {contestant.percentage !== undefined && (
+            <div className="mb-3">
+              <div className="flex justify-between text-xs text-[#737686] mb-1">
+                <span>{contestant.votes.toLocaleString()} votes</span>
+                <span className="font-semibold text-[#004ac6]">{contestant.percentage}%</span>
+              </div>
+              <div className="h-1.5 w-full bg-[#e5eeff] rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-[#004ac6] rounded-full transition-all duration-500"
+                  style={{ width: `${contestant.percentage}%` }}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Vote Button */}
+          <div className="mt-auto pt-3 border-t border-[#c3c6d7]">
+            <button
+              onClick={() => setModalOpen(true)}
+              className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 btn-primary rounded-lg text-white font-geist text-[13px] font-medium tracking-[0.01em] hover:opacity-90 transition-opacity"
+            >
+              <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: '"FILL" 1' }}>thumb_up</span>
+              Vote Now
+              {poll.isPaid && poll.pricePerVote && (
+                <span className="ml-1 opacity-80">(${poll.pricePerVote})</span>
+              )}
+            </button>
+          </div>
+        </div>
       </div>
-      
-      <CardContent className="p-4 flex flex-col gap-3">
-        <div className="flex justify-between items-start gap-2">
-          <h3 className="font-bold text-lg leading-tight line-clamp-2">{name}</h3>
-        </div>
-        
-        <div className="flex justify-between items-center mt-auto">
-          <div className="text-sm font-medium text-muted-foreground">
-            <span className="text-foreground font-bold text-base">{votes.toLocaleString()}</span> votes
-          </div>
-          <Button onClick={() => onVote(id)} size="sm" className="rounded-full shadow-sm hover:shadow-md transition-all">
-            Vote Now
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+
+      <VoteCheckoutModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        contestant={contestant.name}
+        pollTitle={poll.title}
+        pricePerVote={poll.pricePerVote ?? 0}
+        isPaid={poll.isPaid}
+      />
+    </>
   );
 }

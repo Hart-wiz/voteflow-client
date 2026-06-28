@@ -1,5 +1,7 @@
 import { Sidebar } from "@/components/layout/sidebar";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { Bell, Search } from "lucide-react";
+import Link from "next/link";
 
 export default function DashboardLayout({
   children,
@@ -9,16 +11,49 @@ export default function DashboardLayout({
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-background">
       <Sidebar />
+
       <div className="flex flex-col flex-1 overflow-hidden">
-        <header className="h-16 border-b flex items-center justify-between px-6 bg-background shrink-0">
-          <h2 className="font-semibold text-lg">Creator Dashboard</h2>
-          <div className="flex items-center gap-4">
+        {/* Top Header */}
+        <header className="h-16 border-b flex items-center justify-between px-6 bg-background shrink-0 z-10">
+          {/* Left: Search */}
+          <div className="relative hidden md:flex items-center">
+            <Search className="absolute left-3 h-4 w-4 text-muted-foreground" />
+            <input
+              type="search"
+              placeholder="Search polls, contestants..."
+              aria-label="Search dashboard"
+              className="pl-9 pr-4 py-1.5 text-sm border border-border rounded-lg bg-muted/40 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary w-64 transition-all"
+            />
+          </div>
+
+          {/* Right: Actions */}
+          <div className="ml-auto flex items-center gap-3">
+            <Link
+              href="/polls"
+              className="hidden md:inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors border border-border rounded-lg px-3 py-1.5 hover:bg-muted/50"
+            >
+              <span className="material-symbols-outlined text-[16px]">open_in_new</span>
+              View Public Site
+            </Link>
+
+            <button
+              aria-label="Notifications"
+              className="relative w-9 h-9 rounded-full border border-border flex items-center justify-center hover:bg-muted/60 transition-colors"
+            >
+              <Bell className="h-4 w-4 text-muted-foreground" />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-destructive rounded-full" />
+            </button>
+
             <ThemeToggle />
-            <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center font-bold text-primary text-sm">
+
+            {/* Avatar */}
+            <div className="h-9 w-9 rounded-full bg-primary/15 flex items-center justify-center font-bold text-primary text-sm cursor-pointer hover:bg-primary/25 transition-colors select-none">
               JD
             </div>
           </div>
         </header>
+
+        {/* Page content */}
         <main className="flex-1 overflow-y-auto p-6">
           <div className="max-w-6xl mx-auto">
             {children}

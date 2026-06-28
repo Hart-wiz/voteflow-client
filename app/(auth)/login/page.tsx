@@ -70,7 +70,7 @@ export default function SignInPage() {
                     <label className="block text-[14px] leading-[1] tracking-[0.01em] font-medium font-geist text-[#0b1c30]" htmlFor="password">
                       Password
                     </label>
-                    <Link className="text-[12px] leading-[1] font-semibold font-geist text-[#004ac6] hover:underline" href="#">
+                    <Link className="text-[12px] leading-[1] font-semibold font-geist text-[#004ac6] hover:underline" href="/forgot-password">
                       Forgot password?
                     </Link>
                   </div>
@@ -128,7 +128,7 @@ export default function SignInPage() {
           </div>
         </main>
 
-        <Footer />
+
       </div>
     </>
   );

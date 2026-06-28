@@ -3,8 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider, ReactQueryProvider } from "@/components/providers/providers";
 import { Toaster } from "@/components/ui/sonner";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,9 +15,20 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "VoteFlow - Modern Voting & Monetization",
-  description: "Create polls, vote for contestants, and earn money from votes.",
+  title: {
+    default: "VoteFlow — Secure Online Voting Platform",
+    template: "%s | VoteFlow",
+  },
+  description:
+    "Create polls, vote for contestants, and earn money from votes. The premium platform for secure, high-stakes voting campaigns.",
+  keywords: ["voting", "polls", "online voting", "contests", "monetization"],
+  openGraph: {
+    title: "VoteFlow — Secure Online Voting Platform",
+    description: "Create and vote in high-stakes contests. Earn from paid votes.",
+    type: "website",
+  },
 };
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -40,16 +49,12 @@ export default function RootLayout({
       >
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="light"
           enableSystem
           disableTransitionOnChange
         >
           <ReactQueryProvider>
-            <Navbar />
-
             {children}
-            <Footer />
-
             <Toaster />
           </ReactQueryProvider>
         </ThemeProvider>
