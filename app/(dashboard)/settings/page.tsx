@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,11 +8,28 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { Bell, CreditCard, Shield, User } from "lucide-react";
+import { useAuthStore } from "@/lib/stores/auth";
 
 export default function SettingsPage() {
-  const [name, setName] = useState("John Doe");
-  const [email, setEmail] = useState("john@voteflow.io");
+  const { user } = useAuthStore();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    if (user) {
+      setName(user.name || "");
+      setEmail(user.email || "");
+    }
+  }, [user]);
+
+  if (!mounted) return null;
+
+  const initials = user?.name 
+    ? user.name.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2)
+    : "U";
 
   const handleSave = () => {
     setIsSaving(true);
@@ -47,7 +64,7 @@ export default function SettingsPage() {
             <CardContent className="space-y-6 max-w-lg">
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                 <div className="h-16 w-16 rounded-full bg-primary/15 flex items-center justify-center font-bold text-primary text-xl shrink-0">
-                  JD
+                  {initials}
                 </div>
                 <div>
                   <Button variant="outline" size="sm">Change Avatar</Button>

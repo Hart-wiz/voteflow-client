@@ -33,7 +33,6 @@ const mainNavItems: NavItem[] = [
 
 const secondaryNavItems: NavItem[] = [
   { title: "Notifications", href: "/notifications", icon: Bell, badge: "3" },
-  { title: "Admin Console", href: "/admin", icon: ShieldCheck },
   { title: "Settings", href: "/settings", icon: Settings },
 ];
 
