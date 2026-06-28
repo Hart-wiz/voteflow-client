@@ -2,8 +2,8 @@
 
 ## 🔴 High Priority (Blocks Backend Integration)
 
-- [ ] **TanStack Query hooks** — Create `lib/hooks/usePolls.ts`, `usePoll.ts`, `useVote.ts`, `useWallet.ts` wrapping `lib/api/*`
-- [ ] **Auth state management** — Zustand store for `{ user, accessToken, refreshToken }` with persistence
+- [x] **TanStack Query hooks** — Create `lib/hooks/usePolls.ts`, `usePoll.ts`, `useVote.ts`, `useWallet.ts` wrapping `lib/api/*`
+- [x] **Auth state management** — Zustand store for `{ user, accessToken, refreshToken }` with persistence
 - [ ] **Protected routes** — Middleware or layout guard that redirects unauthenticated users away from `/dashboard/*`
 - [ ] **JWT refresh flow** — Auto-refresh access token using refresh token on 401 responses
 - [ ] **Form wiring** — Wire login, register, and create-poll forms to `lib/api/auth.ts` and `lib/api/polls.ts` using React Hook Form + Zod

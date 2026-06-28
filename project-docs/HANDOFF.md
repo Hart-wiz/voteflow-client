@@ -20,34 +20,14 @@ Key changes:
 7. **Forgot password** — `app/(auth)/forgot-password/page.tsx`
 8. **Providers** — `components/providers/providers.tsx` unifies ThemeProvider + ReactQueryProvider
 9. **Mobile Responsive** — All `(public)` and `(dashboard)` pages have been fully optimized for mobile devices, including a hamburger slide-out menu.
+10. **TanStack Query hooks** — `lib/hooks/` created with `usePolls`, `usePoll`, `useVote`, `useWallet` wrapping the `lib/api` layer.
+11. **Auth state management** — `lib/stores/auth.ts` created using Zustand to persist auth state and JWT tokens to localStorage.
 
 ---
 
 ## Immediate Next Steps (in order)
 
-### 1. Build TanStack Query hooks
-Create `lib/hooks/`:
-```
-usePolls(filters) → uses pollsApi.list()
-usePoll(slug)     → uses pollsApi.get()
-useVote()         → uses votesApi.cast()
-useWallet()       → uses walletApi.get()
-```
-Replace mock data in pages with these hooks.
-
-### 2. Auth state management
-Create `lib/stores/auth.ts` using Zustand:
-```typescript
-interface AuthStore {
-  user: User | null;
-  tokens: AuthTokens | null;
-  login(payload): Promise<void>;
-  logout(): void;
-}
-```
-Persist to localStorage. Hydrate on app start.
-
-### 3. Protected route middleware
+### 1. Protected route middleware
 Create `middleware.ts` at root:
 ```typescript
 export function middleware(req) {

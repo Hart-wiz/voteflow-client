@@ -51,13 +51,14 @@
 | `lib/api/polls.ts` | ✅ Complete — list, get, create, update, delete, vote, results |
 | `lib/api/auth.ts` | ✅ Complete — login, register, logout, refresh, reset |
 | `lib/api/wallet.ts` | ✅ Complete — get, transactions, withdraw |
-| TanStack Query Integration | ⚠️ Pending — pages still use mock data directly |
+| TanStack Query Hooks | ✅ Complete — `usePolls`, `usePoll`, `useVote`, `useWallet` created |
+| Auth State Management | ✅ Complete — Zustand store with localStorage persistence |
 | Real Django API | ⏳ Not yet — backend not deployed |
 
 ---
 
 ## Open Issues
-- Pages use mock data directly; not yet wired to `lib/api/*` via TanStack Query hooks
-- Authentication state (JWT storage, protected routes) not implemented
+- Hooks created but pages still use mock data directly; need to wire them into the UI components
+- Protected route middleware not implemented (to redirect unauthenticated users away from `/dashboard/*`)
 - Paystack payment integration not implemented
 - Dark mode not fully tested across all pages

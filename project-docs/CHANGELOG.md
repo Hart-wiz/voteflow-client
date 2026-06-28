@@ -12,6 +12,8 @@ All notable changes are documented here.
 - **FIXED** Root layout (`app/layout.tsx`) — removed global Navbar + Footer; now provides providers only
 - **FIXED** Dashboard layout — no longer inherits public Navbar; has its own search + header
 - **ADDED** `components/providers/providers.tsx` — centralised ThemeProvider + ReactQueryProvider
+- **ADDED** `lib/hooks/` — `usePolls`, `usePoll`, `useVote`, `useWallet` for data fetching using TanStack Query
+- **ADDED** `lib/stores/auth.ts` — Zustand store with `persist` middleware for managing user auth state and tokens
 
 ### Shared Types & Data
 - **ADDED** `lib/types.ts` — all domain interfaces (`Poll`, `Contestant`, `User`, `Transaction`, `WalletData`, `AuthTokens`, etc.)
