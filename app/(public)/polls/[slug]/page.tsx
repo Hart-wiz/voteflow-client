@@ -197,7 +197,7 @@ export default function PollDetailPage() {
 
           {/* Contestants Grid */}
           <div className="lg:col-span-8">
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-4 sm:gap-0 mb-6">
               <h2 className="font-geist text-[26px] font-semibold text-[#0b1c30]">
                 Nominees
                 <span className="ml-2 text-[16px] font-normal text-[#737686]">({poll.contestants.length})</span>
