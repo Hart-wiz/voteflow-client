@@ -29,10 +29,11 @@
 | `/forgot-password` | ✅ Complete | Send + success state |
 | `/dashboard` | ✅ Complete | Stat cards, activity feed (Mobile Responsive) |
 | `/create` | ✅ Complete | 3-step wizard (Mobile Responsive) |
-| `/wallet` | ✅ Complete | Balance + transaction table (Mobile Responsive) |
+| `/my-polls` | ✅ Complete | Dedicated manager for creator polls |
+| `/wallet` | ✅ Complete | Balance + transaction table + improved withdraw form |
 | `/analytics` | ✅ Complete | Stats, bar chart, pie chart (Mobile Responsive) |
-| `/settings` | ✅ Complete | Profile, Notifications, Billing, Security tabs (Mobile Responsive) |
-| `/admin` | ✅ Complete | Flagged content table (Mobile Responsive) |
+| `/settings` | ✅ Complete | Profile, Notifications, Billing, Security tabs (Wired to AuthStore) |
+| `/admin` | ✅ Complete | Link removed from sidebar to keep creator focus |
 | `/notifications` | ✅ Complete | Read/unread states (Mobile Responsive) |
 | `404` (app/not-found.tsx) | ✅ Complete | Gradient 404 with CTAs |
 | `/results` | ⚠️ Stubbed | Planned — needs design |

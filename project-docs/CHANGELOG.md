@@ -31,7 +31,9 @@ All notable changes are documented here.
 - **REWRITTEN** `components/poll-card.tsx` — typed `Poll` prop, `<Link>` to `/polls/:slug`, status badge, paid badge, hover CTA
 - **REWRITTEN** `components/contestant-card.tsx` — typed `Contestant` + `Poll` props, vote progress bar, rank badge, wired to modal
 - **FIXED** `components/vote-checkout-modal.tsx` — prop names aligned (`contestant`, `pollTitle`, `isPaid`)
-- **UPDATED** `components/layout/sidebar.tsx` — all nav items routed correctly (Analytics, Settings, Notifications, Admin)
+- **UPGRADED** `components/withdraw-modal.tsx` — added available balance, quick amount selectors, bank dropdown, and strict validation
+- **ADDED** `components/layout/user-nav.tsx` — wired header avatar dropdown to `useAuthStore` with hydration safe mounted pattern
+- **UPDATED** `components/layout/sidebar.tsx` — all nav items routed correctly (Admin removed, `/my-polls` added)
 
 ### Pages — New
 - **ADDED** `app/(public)/page.tsx` — landing page (moved from `app/page.tsx`)
@@ -39,7 +41,8 @@ All notable changes are documented here.
 - **ADDED** `app/(public)/polls/[slug]/page.tsx` — real slug lookup, live countdown, sticky sidebar, ranked contestants
 - **ADDED** `app/(auth)/forgot-password/page.tsx` — email form with sent-state and back link
 - **ADDED** `app/(dashboard)/analytics/page.tsx` — stat cards, performance bars, chart placeholders
-- **ADDED** `app/(dashboard)/settings/page.tsx` — Profile, Notifications, Billing, Security tabs
+- **ADDED** `app/(dashboard)/my-polls/page.tsx` — dedicated manager for creator-owned polls
+- **ADDED** `app/(dashboard)/settings/page.tsx` — Profile, Notifications, Billing, Security tabs (wired to auth store)
 - **ADDED** `app/(dashboard)/notifications/page.tsx` — read/unread feed
 - **ADDED** `app/not-found.tsx` — global 404 with gradient text and navigation CTAs
 

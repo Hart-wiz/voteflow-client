@@ -36,12 +36,13 @@ This document is designed for the backend developer (or AI agent) building the *
 - `organizer` (String - could be FK to User.name)
 - `category` (String)
 - `description` (Text)
-- `image` (URL / ImageField)
+- `image` (URL / ImageField - used as the poll's banner image)
 - `status` (Enum: `'active'`, `'ending_soon'`, `'closed'`, `'draft'`, `'new'`)
 - `endsAt` (Datetime - ISO 8601 string expected by frontend)
 - `isPaid` (Boolean)
 - `pricePerVote` (Decimal, optional)
 - `tags` (Array of Strings / M2M to Tag model)
+- `votesCount` (Integer, dynamically calculated total votes across all contestants)
 
 ### `Contestant`
 - `id` (UUID)
@@ -99,11 +100,13 @@ This document is designed for the backend developer (or AI agent) building the *
 - `GET /polls/`
   - **Query Params:** `search`, `category`, `status`, `ordering`
   - **Response:** Paginated list of `Poll` objects. (Frontend expects `contestants` array nested inside the poll, or at least `votesCount`).
+- `GET /polls/my-polls/` (Requires Auth, Creator/Admin only)
+  - **Response:** Paginated list of `Poll` objects owned by the authenticated user.
 - `GET /polls/<slug>/`
   - **Response:** Full `Poll` object including nested `contestants` array.
-- `POST /polls/` (Requires Auth)
-  - **Payload:** Poll object data.
-- `PATCH /polls/<slug>/` (Requires Auth, Organizer only)
+- `POST /polls/` (Requires Auth, accepts `multipart/form-data`)
+  - **Payload:** Poll object data (supports uploading a banner `image` file).
+- `PATCH /polls/<slug>/` (Requires Auth, Organizer only, accepts `multipart/form-data`)
   - **Payload:** Partial Poll object data.
 - `DELETE /polls/<slug>/` (Requires Auth, Organizer only)
 
