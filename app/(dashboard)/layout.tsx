@@ -1,6 +1,5 @@
 import { Sidebar } from "@/components/layout/sidebar";
 import { MobileSidebar } from "@/components/layout/mobile-sidebar";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { UserNav } from "@/components/layout/user-nav";
 import { Bell, Search } from "lucide-react";
 import Link from "next/link";
@@ -49,7 +48,6 @@ export default function DashboardLayout({
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-destructive rounded-full" />
             </button>
 
-            <ThemeToggle />
 
             {/* Avatar / Profile Dropdown */}
             <UserNav />

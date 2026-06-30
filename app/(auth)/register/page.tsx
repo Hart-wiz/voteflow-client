@@ -1,11 +1,52 @@
 "use client"
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { toast } from 'sonner';
+import { useAuthStore } from '@/lib/stores/auth';
 
 import { Footer } from '@/components/layout/Footer';
 
+const registerSchema = z.object({
+  name: z.string().min(2, "Full name is required."),
+  email: z.string().email("Please enter a valid email address."),
+  organization: z.string().optional(),
+  password: z.string().min(12, "Password must be at least 12 characters."),
+});
+
+type RegisterFormValues = z.infer<typeof registerSchema>;
+
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const registerAction = useAuthStore((state) => state.register);
+  const router = useRouter();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<RegisterFormValues>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: { name: "", email: "", organization: "", password: "" },
+  });
+
+  const onSubmit = async (data: RegisterFormValues) => {
+    try {
+      await registerAction({
+        name: data.name,
+        email: data.email,
+        organization: data.organization,
+        password: data.password,
+      });
+      toast.success("Account created successfully!");
+      router.push("/dashboard");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to create account. Please try again.");
+    }
+  };
 
   return (
     <>
@@ -97,24 +138,44 @@ export default function RegisterPage() {
                 <div className="flex-grow border-t border-[#c3c6d7]"></div>
               </div>
 
-              <form className="space-y-[24px]" onSubmit={(e) => e.preventDefault()}>
+              <form className="space-y-[24px]" onSubmit={handleSubmit(onSubmit)}>
 
                 {/* Full Name */}
                 <div className="space-y-[4px] group focus-within:scale-[1.01] transition-transform duration-200">
                   <label className="font-geist text-[14px] leading-[1] tracking-[0.01em] font-medium text-[#0b1c30]" htmlFor="name">Full Name</label>
-                  <input className="w-full px-[16px] py-[8px] rounded-lg border border-[#c3c6d7] focus:ring-2 focus:ring-[#004ac6]/20 focus:border-[#004ac6] outline-none transition-all placeholder:text-[#c3c6d7] font-inter text-[16px] leading-[1.5]" id="name" placeholder="Alex Rivera" type="text" />
+                  <input 
+                    {...register("name")}
+                    className={`w-full px-[16px] py-[8px] rounded-lg border ${errors.name ? 'border-red-500' : 'border-[#c3c6d7]'} focus:ring-2 focus:ring-[#004ac6]/20 focus:border-[#004ac6] outline-none transition-all placeholder:text-[#c3c6d7] font-inter text-[16px] leading-[1.5]`} 
+                    id="name" 
+                    placeholder="Alex Rivera" 
+                    type="text" 
+                  />
+                  {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>}
                 </div>
 
                 {/* Work Email */}
                 <div className="space-y-[4px] group focus-within:scale-[1.01] transition-transform duration-200">
                   <label className="font-geist text-[14px] leading-[1] tracking-[0.01em] font-medium text-[#0b1c30]" htmlFor="email">Work Email</label>
-                  <input className="w-full px-[16px] py-[8px] rounded-lg border border-[#c3c6d7] focus:ring-2 focus:ring-[#004ac6]/20 focus:border-[#004ac6] outline-none transition-all placeholder:text-[#c3c6d7] font-inter text-[16px] leading-[1.5]" id="email" placeholder="alex@organization.com" type="email" />
+                  <input 
+                    {...register("email")}
+                    className={`w-full px-[16px] py-[8px] rounded-lg border ${errors.email ? 'border-red-500' : 'border-[#c3c6d7]'} focus:ring-2 focus:ring-[#004ac6]/20 focus:border-[#004ac6] outline-none transition-all placeholder:text-[#c3c6d7] font-inter text-[16px] leading-[1.5]`} 
+                    id="email" 
+                    placeholder="alex@organization.com" 
+                    type="email" 
+                  />
+                  {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
                 </div>
 
                 {/* Organization Name */}
                 <div className="space-y-[4px] group focus-within:scale-[1.01] transition-transform duration-200">
                   <label className="font-geist text-[14px] leading-[1] tracking-[0.01em] font-medium text-[#0b1c30]" htmlFor="org">Organization Name</label>
-                  <input className="w-full px-[16px] py-[8px] rounded-lg border border-[#c3c6d7] focus:ring-2 focus:ring-[#004ac6]/20 focus:border-[#004ac6] outline-none transition-all placeholder:text-[#c3c6d7] font-inter text-[16px] leading-[1.5]" id="org" placeholder="Acme Governance Corp" type="text" />
+                  <input 
+                    {...register("organization")}
+                    className={`w-full px-[16px] py-[8px] rounded-lg border border-[#c3c6d7] focus:ring-2 focus:ring-[#004ac6]/20 focus:border-[#004ac6] outline-none transition-all placeholder:text-[#c3c6d7] font-inter text-[16px] leading-[1.5]`} 
+                    id="org" 
+                    placeholder="Acme Governance Corp" 
+                    type="text" 
+                  />
                 </div>
 
                 {/* Password Field */}
@@ -122,7 +183,8 @@ export default function RegisterPage() {
                   <label className="font-geist text-[14px] leading-[1] tracking-[0.01em] font-medium text-[#0b1c30]" htmlFor="password">Password</label>
                   <div className="relative">
                     <input
-                      className="w-full px-[16px] py-[8px] rounded-lg border border-[#c3c6d7] focus:ring-2 focus:ring-[#004ac6]/20 focus:border-[#004ac6] outline-none transition-all placeholder:text-[#c3c6d7] font-inter text-[16px] leading-[1.5]"
+                      {...register("password")}
+                      className={`w-full px-[16px] py-[8px] rounded-lg border ${errors.password ? 'border-red-500' : 'border-[#c3c6d7]'} focus:ring-2 focus:ring-[#004ac6]/20 focus:border-[#004ac6] outline-none transition-all placeholder:text-[#c3c6d7] font-inter text-[16px] leading-[1.5]`}
                       id="password"
                       placeholder="••••••••"
                       type={showPassword ? "text" : "password"}
@@ -137,11 +199,19 @@ export default function RegisterPage() {
                       </span>
                     </button>
                   </div>
-                  <p className="font-geist text-[12px] leading-[1] font-semibold text-[#c3c6d7]">Must be at least 12 characters.</p>
+                  {errors.password ? (
+                    <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
+                  ) : (
+                    <p className="font-geist text-[12px] leading-[1] font-semibold text-[#c3c6d7]">Must be at least 12 characters.</p>
+                  )}
                 </div>
 
-                <button className="w-full cta-gradient text-[#ffffff] font-geist text-[14px] leading-[1] tracking-[0.01em] font-medium py-[16px] rounded-lg shadow-md hover:shadow-lg transition-all duration-200 active:scale-[0.97] mt-[16px]">
-                  Create Account
+                <button 
+                  className="w-full cta-gradient text-[#ffffff] font-geist text-[14px] leading-[1] tracking-[0.01em] font-medium py-[16px] rounded-lg shadow-md hover:shadow-lg transition-all duration-200 active:scale-[0.97] mt-[16px] disabled:opacity-70 disabled:cursor-not-allowed"
+                  type="submit"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? 'Creating Account...' : 'Create Account'}
                 </button>
               </form>
 

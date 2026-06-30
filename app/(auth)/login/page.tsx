@@ -1,11 +1,46 @@
 "use client"
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { toast } from 'sonner';
+import { useAuthStore } from '@/lib/stores/auth';
 
 import { Footer } from '@/components/layout/Footer';
 
+const loginSchema = z.object({
+  email: z.string().email("Please enter a valid email address."),
+  password: z.string().min(1, "Password is required."),
+  remember: z.boolean().optional(),
+});
+
+type LoginFormValues = z.infer<typeof loginSchema>;
+
 export default function SignInPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const login = useAuthStore((state) => state.login);
+  const router = useRouter();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: "", password: "", remember: false },
+  });
+
+  const onSubmit = async (data: LoginFormValues) => {
+    try {
+      await login({ email: data.email, password: data.password });
+      toast.success("Welcome back!");
+      router.push("/dashboard");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to sign in. Please check your credentials.");
+    }
+  };
 
   return (
     <>
@@ -34,7 +69,7 @@ export default function SignInPage() {
                 </p>
               </div>
 
-              <form action="#" className="space-y-[1.5rem]" method="POST">
+              <form className="space-y-[1.5rem]" onSubmit={handleSubmit(onSubmit)}>
 
                 {/* Social Login */}
                 <button className="w-full flex items-center justify-center gap-3 py-3 px-4 border border-[#c3c6d7] rounded-lg bg-[#f8f9ff] text-[#0b1c30] font-geist text-[14px] leading-[1] tracking-[0.01em] font-medium hover:bg-[#eff4ff] transition-colors duration-200 group" type="button">
@@ -60,8 +95,15 @@ export default function SignInPage() {
                   </label>
                   <div className="relative group">
                     <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#737686] group-focus-within:text-[#004ac6] transition-colors">mail</span>
-                    <input className="w-full pl-10 pr-4 py-3 bg-[#ffffff] border border-[#c3c6d7] rounded-lg text-[16px] leading-[1.5] font-normal font-inter focus:ring-2 focus:ring-[#004ac6] focus:ring-opacity-20 focus:border-[#004ac6] outline-none transition-all placeholder:text-[#c3c6d7]" id="email" name="email" placeholder="name@company.com" required type="email" />
+                    <input 
+                      {...register("email")}
+                      className={`w-full pl-10 pr-4 py-3 bg-[#ffffff] border ${errors.email ? 'border-red-500' : 'border-[#c3c6d7]'} rounded-lg text-[16px] leading-[1.5] font-normal font-inter focus:ring-2 focus:ring-[#004ac6] focus:ring-opacity-20 focus:border-[#004ac6] outline-none transition-all placeholder:text-[#c3c6d7]`} 
+                      id="email" 
+                      placeholder="name@company.com" 
+                      type="email" 
+                    />
                   </div>
+                  {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
                 </div>
 
                 {/* Password Field */}
@@ -77,11 +119,10 @@ export default function SignInPage() {
                   <div className="relative group">
                     <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#737686] group-focus-within:text-[#004ac6] transition-colors">lock</span>
                     <input
-                      className="w-full pl-10 pr-10 py-3 bg-[#ffffff] border border-[#c3c6d7] rounded-lg text-[16px] leading-[1.5] font-normal font-inter focus:ring-2 focus:ring-[#004ac6] focus:ring-opacity-20 focus:border-[#004ac6] outline-none transition-all placeholder:text-[#c3c6d7]"
+                      {...register("password")}
+                      className={`w-full pl-10 pr-10 py-3 bg-[#ffffff] border ${errors.password ? 'border-red-500' : 'border-[#c3c6d7]'} rounded-lg text-[16px] leading-[1.5] font-normal font-inter focus:ring-2 focus:ring-[#004ac6] focus:ring-opacity-20 focus:border-[#004ac6] outline-none transition-all placeholder:text-[#c3c6d7]`}
                       id="password"
-                      name="password"
                       placeholder="••••••••"
-                      required
                       type={showPassword ? "text" : "password"}
                     />
                     <button
@@ -94,19 +135,24 @@ export default function SignInPage() {
                       </span>
                     </button>
                   </div>
+                  {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
                 </div>
 
                 {/* Remember Me */}
                 <div className="flex items-center">
-                  <input className="w-4 h-4 text-[#004ac6] border-[#c3c6d7] rounded focus:ring-[#004ac6] focus:ring-offset-0 transition-all cursor-pointer" id="remember" name="remember" type="checkbox" />
+                  <input {...register("remember")} className="w-4 h-4 text-[#004ac6] border-[#c3c6d7] rounded focus:ring-[#004ac6] focus:ring-offset-0 transition-all cursor-pointer" id="remember" type="checkbox" />
                   <label className="ml-2 text-[14px] leading-[1] tracking-[0.01em] font-medium font-geist text-[#434655] cursor-pointer select-none" htmlFor="remember">
                     Remember me for 30 days
                   </label>
                 </div>
 
                 {/* CTA */}
-                <button className="w-full py-3 px-4 bg-[#004ac6] text-[#ffffff] rounded-lg font-geist text-[14px] leading-[1] tracking-[0.01em] font-medium hover:bg-[#2563eb] active:scale-[0.98] transition-all shadow-md" type="submit">
-                  Sign In
+                <button 
+                  className="w-full py-3 px-4 bg-[#004ac6] text-[#ffffff] rounded-lg font-geist text-[14px] leading-[1] tracking-[0.01em] font-medium hover:bg-[#2563eb] active:scale-[0.98] transition-all shadow-md disabled:opacity-70 disabled:cursor-not-allowed" 
+                  type="submit"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? 'Signing in...' : 'Sign In'}
                 </button>
               </form>
 

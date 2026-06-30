@@ -7,51 +7,105 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Minus, Plus, CreditCard, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useVote } from "@/lib/hooks/useVote";
+import type { Contestant, Poll } from "@/lib/types";
 
 interface VoteCheckoutModalProps {
   isOpen: boolean;
   onClose: () => void;
-  contestant: string;
-  pollTitle: string;
-  pricePerVote?: number;
-  isPaid?: boolean;
+  contestant: Contestant;
+  poll: Poll;
 }
 
-export function VoteCheckoutModal({ isOpen, onClose, contestant, pollTitle, pricePerVote, isPaid }: VoteCheckoutModalProps) {
+export function VoteCheckoutModal({ isOpen, onClose, contestant, poll }: VoteCheckoutModalProps) {
   const [quantity, setQuantity] = useState(1);
-  const [isProcessing, setIsProcessing] = useState(false);
   const [email, setEmail] = useState("");
+  const [isInitializingPayment, setIsInitializingPayment] = useState(false);
+  
+  const voteMutation = useVote();
+  const isProcessing = voteMutation.isPending || isInitializingPayment;
 
-  const isFree = !isPaid || pricePerVote === undefined || pricePerVote === 0;
-  const total = isFree ? 0 : quantity * (pricePerVote || 0);
+  const isFree = !poll.isPaid || poll.pricePerVote === undefined || poll.pricePerVote === 0;
+  const total = isFree ? 0 : quantity * (poll.pricePerVote || 0);
 
-  const handleVote = () => {
-    if (!isFree && !email) {
-      toast.error("Please enter your email to receive a receipt.");
-      return;
-    }
+  const submitVote = async (payment_ref?: string) => {
+    try {
+      await voteMutation.mutateAsync({
+        slug: poll.slug,
+        payload: {
+          contestant_id: contestant.id,
+          quantity,
+          email: email || undefined,
+          payment_ref,
+        },
+      });
 
-    setIsProcessing(true);
-    
-    // Simulate API call / Paystack flow
-    setTimeout(() => {
-      setIsProcessing(false);
-      toast.success(`Successfully cast ${quantity} vote(s) for ${contestant}!`, {
+      toast.success(`Successfully cast ${quantity} vote(s) for ${contestant.name}!`, {
         description: isFree ? "Thank you for voting." : `Payment of $${total.toFixed(2)} processed.`,
       });
       onClose();
       setQuantity(1);
       setEmail("");
-    }, 1500);
+    } catch (err: unknown) {
+      toast.error("Failed to cast vote", {
+        description: err instanceof Error ? err.message : "An unexpected error occurred.",
+      });
+    }
+  };
+
+  const handleVote = async () => {
+    if (!isFree && !email) {
+      toast.error("Please enter your email to receive a receipt.");
+      return;
+    }
+
+    if (isFree) {
+      submitVote();
+    } else {
+      setIsInitializingPayment(true);
+      
+      // Dynamically load Paystack Inline script if not already loaded
+      if (typeof window !== "undefined" && !(window as any).PaystackPop) {
+        await new Promise((resolve, reject) => {
+          const script = document.createElement("script");
+          script.src = "https://js.paystack.co/v1/inline.js";
+          script.async = true;
+          script.onload = resolve;
+          script.onerror = reject;
+          document.body.appendChild(script);
+        }).catch(() => {
+          toast.error("Failed to load payment gateway. Please check your connection.");
+          setIsInitializingPayment(false);
+        });
+      }
+
+      setIsInitializingPayment(false);
+
+      if (typeof window !== "undefined" && (window as any).PaystackPop) {
+        const handler = (window as any).PaystackPop.setup({
+          key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || "",
+          email: email || "anonymous@voteflow.com",
+          amount: total * 100, // Amount in kobo/cents
+          ref: `vote_${new Date().getTime()}`,
+          callback: function (response: { reference: string; trans: string }) {
+            submitVote(response.reference || response.trans);
+          },
+          onClose: function () {
+            toast.info("Payment cancelled.");
+          },
+        });
+        handler.openIframe();
+      }
+    }
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Vote for {contestant}</DialogTitle>
+          <DialogTitle>Vote for {contestant.name}</DialogTitle>
           <DialogDescription>
-            {pollTitle}
+            {poll.title}
           </DialogDescription>
         </DialogHeader>
 

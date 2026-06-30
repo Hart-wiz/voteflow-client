@@ -9,7 +9,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CheckCircle2, ChevronRight, Loader2, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { POLL_CATEGORIES } from "@/lib/data/polls";
+import { POLL_CATEGORIES } from "@/lib/constants";
+import { useCreatePoll } from "@/lib/hooks/usePolls";
 
 export default function CreatePollPage() {
   const router = useRouter();
@@ -53,14 +54,45 @@ export default function CreatePollPage() {
     setContestants(contestants.map(c => c.id === id ? { ...c, [field]: value } : c));
   };
 
-  const handlePublish = () => {
+  const createPoll = useCreatePoll();
+
+  const handlePublish = async () => {
     setIsSubmitting(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false);
+    
+    try {
+      const formData = new FormData();
+      formData.append("title", pollData.title);
+      formData.append("description", pollData.description);
+      formData.append("category", pollData.category);
+      formData.append("isPaid", pollData.type === "paid" ? "true" : "false");
+      if (pollData.type === "paid" && pollData.price) {
+        formData.append("pricePerVote", pollData.price);
+      }
+      formData.append("endsAt", new Date(pollData.endsAt).toISOString());
+      
+      if (pollData.image) {
+        formData.append("image", pollData.image);
+      }
+
+      // Append contestants
+      contestants.forEach((c, i) => {
+        formData.append(`contestants[${i}]name`, c.name);
+        formData.append(`contestants[${i}]description`, c.description);
+        if (c.image) {
+          formData.append(`contestants[${i}]image`, c.image);
+        }
+      });
+
+      await createPoll.mutateAsync(formData);
+      
       toast.success("Poll successfully created and is now live!");
-      router.push("/dashboard");
-    }, 2000);
+      router.push("/my-polls");
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error?.message || "Failed to create poll. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

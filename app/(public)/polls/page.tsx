@@ -3,8 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { polls, POLL_CATEGORIES } from "@/lib/data/polls";
+import { POLL_CATEGORIES } from "@/lib/constants";
 import { PollCard } from "@/components/poll-card";
+import { usePolls } from "@/lib/hooks/usePolls";
 import type { PollStatus } from "@/lib/types";
 
 // NOTE: metadata can't be exported from a client component.
@@ -25,18 +26,20 @@ export default function DiscoverPage() {
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const [selectedStatus, setSelectedStatus] = useState<StatusFilter>("All");
 
-  const statusValues = getStatusFilter(selectedStatus);
+  const statusFilterMap: Record<StatusFilter, PollStatus | 'all' | undefined> = {
+    All: "all",
+    Active: "active",
+    Ending: "ending_soon",
+  };
 
-  const filteredPolls = polls.filter((poll) => {
-    const matchesSearch =
-      poll.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      poll.organizer.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory =
-      selectedCategory === "All Categories" ||
-      poll.category === selectedCategory;
-    const matchesStatus = !statusValues || statusValues.includes(poll.status);
-    return matchesSearch && matchesCategory && matchesStatus;
+  const { data, isLoading, error } = usePolls({
+    search: searchQuery || undefined,
+    category: selectedCategory === "All Categories" ? undefined : selectedCategory,
+    status: statusFilterMap[selectedStatus] === "all" ? undefined : statusFilterMap[selectedStatus],
   });
+
+  const polls = data?.results || [];
+  const totalCount = data?.count || 0;
 
   return (
     <div className="bg-[#f8f9ff] min-h-screen">
@@ -151,15 +154,25 @@ export default function DiscoverPage() {
         {/* Results count */}
         <div className="flex items-center justify-between mb-6">
           <p className="font-inter text-[14px] text-[#737686]">
-            Showing <span className="font-semibold text-[#0b1c30]">{filteredPolls.length}</span> of{" "}
-            {polls.length} contests
+            Showing <span className="font-semibold text-[#0b1c30]">{polls.length}</span> of{" "}
+            {totalCount} contests
           </p>
         </div>
 
         {/* Contest Grid */}
-        {filteredPolls.length > 0 ? (
+        {isLoading ? (
+          <div className="flex items-center justify-center py-24">
+            <span className="material-symbols-outlined text-[48px] text-[#004ac6] animate-spin">refresh</span>
+          </div>
+        ) : error ? (
+          <div className="flex flex-col items-center justify-center py-24 text-center">
+            <span className="material-symbols-outlined text-[64px] text-[#ba1a1a] mb-4">error</span>
+            <h3 className="font-geist text-[20px] font-semibold text-[#0b1c30] mb-2">Error loading polls</h3>
+            <p className="font-inter text-[15px] text-[#737686] max-w-sm">Please try again later.</p>
+          </div>
+        ) : polls.length > 0 ? (
           <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredPolls.map((poll) => (
+            {polls.map((poll) => (
               <PollCard key={poll.slug} poll={poll} />
             ))}
           </section>
@@ -190,7 +203,7 @@ export default function DiscoverPage() {
         )}
 
         {/* Pagination placeholder */}
-        {filteredPolls.length > 0 && (
+        {polls.length > 0 && (
           <nav
             aria-label="Pagination"
             className="mt-16 flex flex-col md:flex-row items-center justify-between gap-6 border-t border-[#c3c6d7] pt-10"

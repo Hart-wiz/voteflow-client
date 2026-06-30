@@ -4,13 +4,16 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { useState, useEffect } from "react";
-import { getPollBySlug } from "@/lib/data/polls";
+import { usePoll } from "@/lib/hooks/usePoll";
 import { ContestantCard } from "@/components/contestant-card";
+import { useAuthStore } from "@/lib/stores/auth";
+import { AddContestantModal } from "@/components/add-contestant-modal";
 
-function useCountdown(endsAt: string) {
+function useCountdown(endsAt: string | undefined) {
   const [parts, setParts] = useState({ days: 0, hours: 0, mins: 0, secs: 0 });
 
   useEffect(() => {
+    if (!endsAt) return;
     const update = () => {
       const diff = new Date(endsAt).getTime() - Date.now();
       if (diff <= 0) {
@@ -34,12 +37,23 @@ function useCountdown(endsAt: string) {
 
 export default function PollDetailPage() {
   const { slug } = useParams() as { slug: string };
-  const poll = getPollBySlug(slug);
+  const { data: poll, isLoading, error } = usePoll(slug);
+  const { user } = useAuthStore();
 
-  if (!poll) notFound();
+  const countdown = useCountdown(poll?.endsAt);
+  const totalVotes = poll?.contestants.reduce((sum, c) => sum + c.votes, 0) || 0;
 
-  const countdown = useCountdown(poll.endsAt);
-  const totalVotes = poll.contestants.reduce((sum, c) => sum + c.votes, 0);
+  if (isLoading) {
+    return (
+      <div className="bg-[#f8f9ff] min-h-screen flex items-center justify-center">
+        <span className="material-symbols-outlined text-[48px] text-[#004ac6] animate-spin">refresh</span>
+      </div>
+    );
+  }
+
+  if (error || !poll) {
+    notFound();
+  }
 
   const statusLabel: Record<typeof poll.status, string> = {
     active: "Active Contest",
@@ -198,10 +212,15 @@ export default function PollDetailPage() {
           {/* Contestants Grid */}
           <div className="lg:col-span-8">
             <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-4 sm:gap-0 mb-6">
-              <h2 className="font-geist text-[26px] font-semibold text-[#0b1c30]">
-                Nominees
-                <span className="ml-2 text-[16px] font-normal text-[#737686]">({poll.contestants.length})</span>
-              </h2>
+              <div className="flex items-center gap-4">
+                <h2 className="font-geist text-[26px] font-semibold text-[#0b1c30]">
+                  Nominees
+                  <span className="ml-2 text-[16px] font-normal text-[#737686]">({poll.contestants.length})</span>
+                </h2>
+                {user && (user.name === poll.organizer || user.role === "admin") && (
+                  <AddContestantModal pollSlug={poll.slug} />
+                )}
+              </div>
               <div className="flex items-center gap-2">
                 <span className="font-inter text-[13px] text-[#737686]">Sort by:</span>
                 <select className="bg-white border border-[#c3c6d7] rounded-lg font-inter text-[13px] text-[#0b1c30] py-1.5 px-3 focus:ring-2 focus:ring-[#004ac6]/20 focus:border-[#004ac6] outline-none cursor-pointer">

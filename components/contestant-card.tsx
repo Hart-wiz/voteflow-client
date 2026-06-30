@@ -82,10 +82,8 @@ export function ContestantCard({ contestant, poll, rank, className }: Contestant
       <VoteCheckoutModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
-        contestant={contestant.name}
-        pollTitle={poll.title}
-        pricePerVote={poll.pricePerVote ?? 0}
-        isPaid={poll.isPaid}
+        contestant={contestant}
+        poll={poll}
       />
     </>
   );

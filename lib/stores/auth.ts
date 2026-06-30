@@ -3,6 +3,20 @@ import { persist } from "zustand/middleware";
 import { authApi } from "@/lib/api/auth";
 import type { User, AuthTokens } from "@/lib/types";
 
+// Helper to sync token to a cookie for Next.js Middleware
+const setCookie = (token: string) => {
+  if (typeof document !== "undefined") {
+    // Set cookie to expire in 7 days
+    document.cookie = `voteflow-token=${token}; path=/; max-age=604800; SameSite=Lax`;
+  }
+};
+
+const deleteCookie = () => {
+  if (typeof document !== "undefined") {
+    document.cookie = `voteflow-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+  }
+};
+
 interface AuthState {
   user: User | null;
   tokens: AuthTokens | null;
@@ -25,6 +39,7 @@ export const useAuthStore = create<AuthState>()(
 
       login: async (payload) => {
         const response = await authApi.login(payload);
+        setCookie(response.tokens.access);
         set({
           user: response.user,
           tokens: response.tokens,
@@ -34,6 +49,7 @@ export const useAuthStore = create<AuthState>()(
 
       register: async (payload) => {
         const response = await authApi.register(payload);
+        setCookie(response.tokens.access);
         set({
           user: response.user,
           tokens: response.tokens,
@@ -50,6 +66,7 @@ export const useAuthStore = create<AuthState>()(
             console.error("Logout failed on server, proceeding to clear local state", e);
           }
         }
+        deleteCookie();
         set({ user: null, tokens: null, isAuthenticated: false });
       },
 
@@ -60,6 +77,7 @@ export const useAuthStore = create<AuthState>()(
       },
 
       setTokens: (tokens) => {
+        setCookie(tokens.access);
         set({ tokens, isAuthenticated: true });
       },
     }),

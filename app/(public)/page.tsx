@@ -24,7 +24,7 @@ export default function LandingPage() {
               </div>
 
               <h1 className="font-geist text-[36px] md:text-[48px] font-bold leading-[1.2] md:leading-[1.1] tracking-[-0.02em] text-[#0b1c30]">
-                Powering the World's Most{" "}
+                Powering the World&apos;s Most{" "}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#004ac6] to-[#712ae2]">
                   Engaging Contests
                 </span>

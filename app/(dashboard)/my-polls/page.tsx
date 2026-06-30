@@ -7,22 +7,19 @@ import { PlusCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useAuthStore } from "@/lib/stores/auth";
 
-// Temporary fallback until the API is real
-import { polls as MOCK_POLLS } from "@/lib/data/polls";
-
 export default function MyPollsPage() {
   const { user } = useAuthStore();
-  // We use our TanStack hook. If the API is offline, it will fail, so we'll fallback to mock data for demo.
+  // We use our TanStack hook.
   const { data, isLoading, error } = usePolls();
   
-  // For the sake of the frontend demo, if API fails or returns no data, we use MOCK_POLLS
-  const polls = data?.results || MOCK_POLLS;
+  // If API fails or returns no data, we use empty array
+  const polls = data?.results || [];
 
-  // Filter to show only the logged in user's polls (mock logic)
-  const myPolls = user ? polls.filter(p => p.organizer === user.name) : polls;
+  // Filter to show only the logged in user's polls
+  // Ideally, the backend would have a filter or endpoint for this, e.g. /polls/?organizer=name
+  const myPolls = user ? polls.filter(p => p.organizer === user.name) : [];
   
-  // If the mock filter results in 0, just show all for demo purposes so it's not empty
-  const displayPolls = myPolls.length > 0 ? myPolls : polls;
+  const displayPolls = myPolls;
 
   return (
     <div className="space-y-6">
@@ -50,7 +47,7 @@ export default function MyPollsPage() {
           </div>
           <h3 className="text-lg font-bold">No polls yet</h3>
           <p className="text-muted-foreground max-w-sm mx-auto mb-6">
-            You haven't created any polls. Click the button below to launch your first poll.
+            You haven&apos;t created any polls. Click the button below to launch your first poll.
           </p>
           <Link href="/create">
             <Button>

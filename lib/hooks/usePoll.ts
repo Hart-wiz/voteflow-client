@@ -31,3 +31,13 @@ export function useDeletePoll() {
     },
   });
 }
+
+export function useAddContestant() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ slug, data }: { slug: string; data: FormData }) => pollsApi.addContestant(slug, data),
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["poll", variables.slug] });
+    },
+  });
+}

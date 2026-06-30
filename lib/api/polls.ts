@@ -22,12 +22,16 @@ export const pollsApi = {
     apiClient.get<Poll>(`/polls/${slug}/`, { public: true }),
 
   /** POST /polls/ */
-  create: (data: Partial<Poll>) =>
-    apiClient.post<Poll, Partial<Poll>>("/polls/", data),
+  create: (data: Partial<Poll> | FormData) =>
+    apiClient.post<Poll, Partial<Poll> | FormData>("/polls/", data),
 
   /** PATCH /polls/:slug/ */
   update: (slug: string, data: Partial<Poll>) =>
     apiClient.patch<Poll, Partial<Poll>>(`/polls/${slug}/`, data),
+
+  /** POST /polls/:slug/contestants/ */
+  addContestant: (slug: string, data: FormData) =>
+    apiClient.post<Contestant, FormData>(`/polls/${slug}/contestants/`, data),
 
   /** DELETE /polls/:slug/ */
   delete: (slug: string) =>

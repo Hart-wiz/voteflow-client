@@ -12,7 +12,7 @@ export function usePolls(filters?: PollFilters) {
 export function useCreatePoll() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: Partial<Poll>) => pollsApi.create(data),
+    mutationFn: (data: Partial<Poll> | FormData) => pollsApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["polls"] });
     },
