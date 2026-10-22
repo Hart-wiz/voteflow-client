@@ -17,16 +17,13 @@ import { useWithdraw } from "@/lib/hooks/useWallet";
 import { toast } from "sonner";
 import { ArrowDownToLine, Loader2 } from "lucide-react";
 
-export function WithdrawModal() {
+export function WithdrawModal({ availableBalance }: { availableBalance: number }) {
   const [open, setOpen] = useState(false);
   const [amount, setAmount] = useState("");
   const [bankCode, setBankCode] = useState("");
   const [accountNumber, setAccountNumber] = useState("");
   
   const withdrawMutation = useWithdraw();
-
-  // Mock available balance for demo
-  const availableBalance = 12450.00;
 
   const handleQuickAmount = (percentage: number) => {
     setAmount((availableBalance * percentage).toFixed(2));
@@ -63,7 +60,7 @@ export function WithdrawModal() {
           setAccountNumber("");
         },
         onError: () => {
-          toast.error("Failed to process withdrawal. Please try again.");
+      toast.error("Failed to process withdrawal. Check your bank details and try again.");
         }
       }
     );
@@ -87,13 +84,13 @@ export function WithdrawModal() {
 
         <div className="bg-muted/50 p-4 rounded-lg flex items-center justify-between mb-2 border">
           <span className="text-sm font-medium text-muted-foreground">Available Balance</span>
-          <span className="text-xl font-bold text-foreground">${availableBalance.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
+          <span className="text-xl font-bold text-foreground">{formatNaira(availableBalance)}</span>
         </div>
 
         <div className="grid gap-4 py-2">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <Label htmlFor="amount">Amount ($)</Label>
+              <Label htmlFor="amount">Amount (NGN)</Label>
               <div className="flex items-center gap-1">
                 <Button variant="outline" size="sm" className="h-6 px-2 text-[10px]" onClick={() => handleQuickAmount(0.25)}>25%</Button>
                 <Button variant="outline" size="sm" className="h-6 px-2 text-[10px]" onClick={() => handleQuickAmount(0.5)}>50%</Button>
@@ -156,4 +153,8 @@ export function WithdrawModal() {
       </DialogContent>
     </Dialog>
   );
+}
+
+function formatNaira(amount: number) {
+  return new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN" }).format(amount);
 }

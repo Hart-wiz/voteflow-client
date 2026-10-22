@@ -60,35 +60,43 @@ export function VoteCheckoutModal({ isOpen, onClose, contestant, poll }: VoteChe
     }
 
     if (isFree) {
-      submitVote();
+      await submitVote();
     } else {
       setIsInitializingPayment(true);
       
       // Dynamically load Paystack Inline script if not already loaded
       if (typeof window !== "undefined" && !(window as any).PaystackPop) {
-        await new Promise((resolve, reject) => {
-          const script = document.createElement("script");
-          script.src = "https://js.paystack.co/v1/inline.js";
-          script.async = true;
-          script.onload = resolve;
-          script.onerror = reject;
-          document.body.appendChild(script);
-        }).catch(() => {
+        try {
+          await new Promise<void>((resolve, reject) => {
+            const script = document.createElement("script");
+            script.src = "https://js.paystack.co/v1/inline.js";
+            script.async = true;
+            script.onload = () => resolve();
+            script.onerror = () => reject(new Error("Could not load Paystack"));
+            document.body.appendChild(script);
+          });
+        } catch {
           toast.error("Failed to load payment gateway. Please check your connection.");
           setIsInitializingPayment(false);
-        });
+          return;
+        }
       }
 
       setIsInitializingPayment(false);
 
       if (typeof window !== "undefined" && (window as any).PaystackPop) {
+        const publicKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY;
+        if (!publicKey) {
+          toast.error("Online payment is not configured yet.");
+          return;
+        }
         const handler = (window as any).PaystackPop.setup({
-          key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || "",
-          email: email || "anonymous@voteflow.com",
+          key: publicKey,
+          email,
           amount: total * 100, // Amount in kobo/cents
           ref: `vote_${new Date().getTime()}`,
           callback: function (response: { reference: string; trans: string }) {
-            submitVote(response.reference || response.trans);
+            void submitVote(response.reference || response.trans);
           },
           onClose: function () {
             toast.info("Payment cancelled.");
@@ -126,7 +134,7 @@ export function VoteCheckoutModal({ isOpen, onClose, contestant, poll }: VoteChe
                 variant="outline" 
                 size="icon" 
                 onClick={() => setQuantity(quantity + 1)}
-                disabled={isProcessing}
+                disabled={isProcessing || quantity >= 1000}
               >
                 <Plus className="h-4 w-4" />
               </Button>
@@ -150,7 +158,7 @@ export function VoteCheckoutModal({ isOpen, onClose, contestant, poll }: VoteChe
           <div className="bg-muted p-4 rounded-lg flex justify-between items-center">
             <span className="font-medium">Total</span>
             <span className="text-xl font-bold">
-              {isFree ? "Free" : `$${total.toFixed(2)}`}
+              {isFree ? "Free" : `₦${total.toLocaleString("en-NG", { minimumFractionDigits: 2 })}`}
             </span>
           </div>
         </div>

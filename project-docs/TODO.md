@@ -4,19 +4,19 @@
 
 - [x] **TanStack Query hooks** — Create `lib/hooks/usePolls.ts`, `usePoll.ts`, `useVote.ts`, `useWallet.ts` wrapping `lib/api/*`
 - [x] **Auth state management** — Zustand store for `{ user, accessToken, refreshToken }` with persistence
-- [ ] **Protected routes** — Middleware or layout guard that redirects unauthenticated users away from `/dashboard/*`
-- [ ] **JWT refresh flow** — Auto-refresh access token using refresh token on 401 responses
-- [ ] **Form wiring** — Wire login, register, and create-poll forms to `lib/api/auth.ts` and `lib/api/polls.ts` using React Hook Form + Zod
+- [x] **Protected routes** — Proxy guards dashboard routes and redirects unauthenticated users
+- [x] **JWT refresh flow** — Automatically refreshes tokens after 401 responses
+- [x] **Form wiring** — Login, registration, and create-poll forms call the live API
 
 ## 🟠 Medium Priority (Core Features)
 
-- [ ] **Paystack integration** — Wrap paid-vote flow in Paystack popup; pass `payment_ref` to `votesApi.cast()`
+- [x] **Paystack integration** — Paid votes use the Paystack popup and submit the reference for server verification
 - [ ] **Results page** — `/results` public listing + `/polls/:slug/results` post-close results
 - [ ] **Vote success page** — `/vote-success` with contestant name, poll title, and share button
-- [ ] **Poll creation API call** — Connect multi-step wizard to `pollsApi.create()`
-- [ ] **Withdrawal flow** — Wire "Withdraw Funds" button in wallet to `walletApi.withdraw()` with confirmation modal
+- [x] **Poll creation API call** — Multi-step wizard submits poll, contestant, and image data to the API
+- [x] **Withdrawal flow** — Wallet confirmation modal submits withdrawal requests to the API
 - [x] **Mobile Navbar** — Hamburger menu for the public and dashboard Navbar on small screens
-- [ ] **Image upload** — Poll cover image upload in the create-poll wizard
+- [x] **Image upload** — Create-poll wizard uploads poll and contestant images
 
 ## 🟡 Low Priority (Polish)
 

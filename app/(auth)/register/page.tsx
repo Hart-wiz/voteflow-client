@@ -41,7 +41,7 @@ export default function RegisterPage() {
         organization: data.organization,
         password: data.password,
       });
-      toast.success("Account created successfully!");
+      toast.success(data.organization ? "Account created. Organizer access is pending admin approval." : "Account created successfully!");
       router.push("/dashboard");
     } catch (error: any) {
       toast.error(error.message || "Failed to create account. Please try again.");

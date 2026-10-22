@@ -18,6 +18,7 @@ export interface Contestant {
 }
 
 export interface Poll {
+  id: string;
   slug: string;
   title: string;
   organizer: string;

@@ -1,4 +1,4 @@
-import { apiClient } from "./client";
+import { apiClient, normalizePaginatedResponse } from "./client";
 import type { Poll, PollFilters, PaginatedResponse, Contestant } from "@/lib/types";
 
 // ─── Polls ────────────────────────────────────────────────────
@@ -14,8 +14,16 @@ export const pollsApi = {
     if (filters?.sortBy)   params.set("ordering", filters.sortBy);
 
     const query = params.toString();
-    return apiClient.get<PaginatedResponse<Poll>>(`/polls/${query ? `?${query}` : ""}`, { public: true });
+    return apiClient
+      .get<Partial<PaginatedResponse<Poll>> & { items?: Poll[] }>(`/polls/${query ? `?${query}` : ""}`, { public: true })
+      .then(normalizePaginatedResponse);
   },
+
+  /** GET /polls/my-polls/ */
+  myPolls: () =>
+    apiClient
+      .get<Partial<PaginatedResponse<Poll>> & { items?: Poll[] }>("/polls/my-polls/")
+      .then(normalizePaginatedResponse),
 
   /** GET /polls/:slug/ */
   get: (slug: string) =>
@@ -26,8 +34,15 @@ export const pollsApi = {
     apiClient.post<Poll, Partial<Poll> | FormData>("/polls/", data),
 
   /** PATCH /polls/:slug/ */
-  update: (slug: string, data: Partial<Poll>) =>
-    apiClient.patch<Poll, Partial<Poll>>(`/polls/${slug}/`, data),
+  update: (slug: string, data: Partial<Poll>) => {
+    const formData = new FormData();
+    for (const [key, value] of Object.entries(data)) {
+      if (value !== undefined && value !== null) {
+        formData.append(key, Array.isArray(value) ? JSON.stringify(value) : String(value));
+      }
+    }
+    return apiClient.patch<Poll, FormData>(`/polls/${slug}/`, formData);
+  },
 
   /** POST /polls/:slug/contestants/ */
   addContestant: (slug: string, data: FormData) =>

@@ -25,7 +25,7 @@ export function PollCard({ poll, className }: PollCardProps) {
         {/* Image */}
         <div className="relative h-56 overflow-hidden flex-shrink-0">
           <img
-            src={poll.image}
+            src={poll.image || "/window.svg"}
             alt={poll.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
@@ -38,7 +38,7 @@ export function PollCard({ poll, className }: PollCardProps) {
             <div className="absolute top-4 right-4">
               <span className="bg-[#712ae2] text-white text-[10px] font-bold px-2 py-1 rounded flex items-center gap-1">
                 <span className="material-symbols-outlined text-[12px]" style={{ fontVariationSettings: '"FILL" 1' }}>paid</span>
-                ${poll.pricePerVote}/vote
+                ₦{Number(poll.pricePerVote || 0).toLocaleString("en-NG")}/vote
               </span>
             </div>
           )}

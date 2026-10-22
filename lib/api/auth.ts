@@ -4,8 +4,20 @@ import type { User, AuthTokens } from "@/lib/types";
 interface LoginPayload     { email: string; password: string }
 interface RegisterPayload  { name: string; email: string; password: string; organization?: string }
 interface ResetPayload     { email: string }
-interface ConfirmPayload   { token: string; password: string }
+interface ConfirmPayload   { email: string; code: string; password: string }
 interface RefreshPayload   { refresh: string }
+interface OrganizerRequestPayload { business_name: string; bio?: string }
+export interface OrganizerRequest {
+  id: string;
+  name: string;
+  email: string;
+  business_name: string;
+  bio: string;
+  is_approved: boolean;
+  requested_at: string;
+}
+
+export type OrganizerRequestStatus = OrganizerRequest | { status: "not_requested" };
 
 interface LoginResponse    { user: User; tokens: AuthTokens }
 interface RegisterResponse { user: User; tokens: AuthTokens }
@@ -42,4 +54,13 @@ export const authApi = {
   /** PATCH /auth/me/ */
   updateProfile: (data: Partial<User>) =>
     apiClient.patch<User, Partial<User>>("/auth/me/", data),
+
+  requestOrganizerAccess: (payload: OrganizerRequestPayload) =>
+    apiClient.post<{ status?: string; is_approved?: boolean; message?: string }, OrganizerRequestPayload>("/auth/organizer/request/", payload),
+
+  organizerRequestStatus: () => apiClient.get<OrganizerRequestStatus>("/auth/organizer/request/"),
+
+  organizerRequests: () => apiClient.get<OrganizerRequest[]>("/auth/admin/organizers/"),
+  approveOrganizer: (id: string) => apiClient.post<{ success: boolean; message: string }, Record<string, never>>(`/auth/admin/organizers/${id}/approve/`, {}),
+  rejectOrganizer: (id: string) => apiClient.post<{ success: boolean; message: string }, Record<string, never>>(`/auth/admin/organizers/${id}/reject/`, {}),
 };

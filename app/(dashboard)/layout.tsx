@@ -40,13 +40,13 @@ export default function DashboardLayout({
               View Public Site
             </Link>
 
-            <button
+            <Link
+              href="/notifications"
               aria-label="Notifications"
-              className="relative w-9 h-9 rounded-full border border-border flex items-center justify-center hover:bg-muted/60 transition-colors"
+              className="relative flex h-9 w-9 items-center justify-center rounded-full border border-border transition-colors hover:bg-muted/60"
             >
               <Bell className="h-4 w-4 text-muted-foreground" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-destructive rounded-full" />
-            </button>
+            </Link>
 
 
             {/* Avatar / Profile Dropdown */}

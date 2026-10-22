@@ -39,9 +39,11 @@ export default function PollDetailPage() {
   const { slug } = useParams() as { slug: string };
   const { data: poll, isLoading, error } = usePoll(slug);
   const { user } = useAuthStore();
+  const [sortMode, setSortMode] = useState<"votes" | "alphabetical">("votes");
 
   const countdown = useCountdown(poll?.endsAt);
   const totalVotes = poll?.contestants.reduce((sum, c) => sum + c.votes, 0) || 0;
+  const contestants = poll ? [...poll.contestants].sort((a, b) => sortMode === "votes" ? b.votes - a.votes : a.name.localeCompare(b.name)) : [];
 
   if (isLoading) {
     return (
@@ -80,7 +82,7 @@ export default function PollDetailPage() {
         <section className="mb-10 relative rounded-xl overflow-hidden bg-[#eff4ff] border border-[#c3c6d7] soft-glow-shadow">
           <div className="absolute inset-0">
             <img
-              src={poll.image}
+              src={poll.image || "/window.svg"}
               alt={poll.title}
               className="w-full h-full object-cover opacity-15"
             />
@@ -98,7 +100,7 @@ export default function PollDetailPage() {
               {poll.isPaid && (
                 <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#712ae2] text-white font-geist text-[12px] font-semibold">
                   <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: '"FILL" 1' }}>paid</span>
-                  ${poll.pricePerVote}/vote
+                  ₦{Number(poll.pricePerVote || 0).toLocaleString("en-NG")}/vote
                 </span>
               )}
             </div>
@@ -115,6 +117,9 @@ export default function PollDetailPage() {
                 <span className="material-symbols-outlined text-[18px]">share</span>
                 Share Contest
               </button>
+              <Link href={`/results/${poll.slug}`} className="inline-flex items-center gap-2 rounded-lg border border-[#c3c6d7] bg-white px-5 py-2.5 font-geist text-[13px] font-medium text-[#0b1c30] transition-colors hover:bg-[#eff4ff]">
+                View Results
+              </Link>
               <div className="inline-flex items-center gap-2 text-[#434655] font-inter text-[13px] bg-white px-4 py-2.5 rounded-lg border border-[#c3c6d7]">
                 <span className="material-symbols-outlined text-[#004ac6] text-[18px]" style={{ fontVariationSettings: '"FILL" 1' }}>verified_user</span>
                 Secure · 1 vote per person
@@ -223,17 +228,15 @@ export default function PollDetailPage() {
               </div>
               <div className="flex items-center gap-2">
                 <span className="font-inter text-[13px] text-[#737686]">Sort by:</span>
-                <select className="bg-white border border-[#c3c6d7] rounded-lg font-inter text-[13px] text-[#0b1c30] py-1.5 px-3 focus:ring-2 focus:ring-[#004ac6]/20 focus:border-[#004ac6] outline-none cursor-pointer">
-                  <option>Most Votes</option>
-                  <option>Alphabetical</option>
+                <select value={sortMode} onChange={(event) => setSortMode(event.target.value as "votes" | "alphabetical")} className="bg-white border border-[#c3c6d7] rounded-lg font-inter text-[13px] text-[#0b1c30] py-1.5 px-3 focus:ring-2 focus:ring-[#004ac6]/20 focus:border-[#004ac6] outline-none cursor-pointer">
+                  <option value="votes">Most Votes</option>
+                  <option value="alphabetical">Alphabetical</option>
                 </select>
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              {poll.contestants
-                .sort((a, b) => b.votes - a.votes)
-                .map((contestant, idx) => (
+              {contestants.map((contestant, idx) => (
                   <ContestantCard
                     key={contestant.id}
                     contestant={contestant}

@@ -1,7 +1,7 @@
 # VoteFlow — Project Documentation
 
 ## Project Overview
-VoteFlow is a Next.js 16 (App Router) + TypeScript + Tailwind CSS v4 + shadcn/ui frontend for a premium online voting SaaS platform. The backend is a Django REST API (not yet integrated).
+VoteFlow is a Next.js 16 (App Router) + TypeScript + Tailwind CSS v4 + shadcn/ui frontend for an online voting platform. It is integrated with the Django API; database and external provider setup is still required before running the full stack.
 
 Users can: browse voting campaigns, vote (free or paid), view live results, share polls, create and manage polls, earn from paid votes, manage wallets, and access creator/admin dashboards.
 

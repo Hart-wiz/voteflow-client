@@ -1,88 +1,30 @@
 # Handoff Guide
 
-## For the Next Developer / Agent
+## Current state
 
-Welcome. This document tells you exactly what state the project is in, what was done, and what to do next.
+The VoteFlow client is wired to the Django API for the current product flows. Authentication, poll browsing and creation, voting, wallet actions, notifications, results, and organizer review use live API functions. Paid voting opens Paystack and the server verifies payment before recording votes. Transactional email is sent by the server through Resend.
 
----
+The client production build completed successfully. The server configuration check passed. No database migrations have been run and no external services have been configured in this workspace, so follow the [server setup guide](../../voteflow-server/SETUP.md) before running the full application.
 
-## What Was Done (v0.2.0)
+## Remaining work
 
-The frontend was transformed from a prototype with scattered hardcoded data and broken routing into a structured, scalable SaaS frontend.
+- Complete and verify the database and provider setup in the server guide.
+- The `.kiro` server roadmap includes larger items that are still open: the expanded contest and voter verification APIs, background security monitoring, automated integration/property coverage, and final migration/deployment checkpoints.
+- The client backlog in [TODO.md](./TODO.md) tracks remaining UI polish and pages.
 
-Key changes:
-1. **Routing fixed** — Route groups `(public)`, `(auth)`, `(dashboard)` prevent double-navigation
-2. **Single data source** — `lib/data/polls.ts` is now the only place poll data lives
-3. **Shared types** — `lib/types.ts` defines all domain interfaces
-4. **API stubs** — `lib/api/` has typed endpoint functions ready to plug into Django REST
-5. **All sidebar routes work** — Analytics, Settings, Notifications, Admin pages exist
-6. **404 page** — `app/not-found.tsx`
-7. **Forgot password** — `app/(auth)/forgot-password/page.tsx`
-8. **Providers** — `components/providers/providers.tsx` unifies ThemeProvider + ReactQueryProvider
-9. **Mobile Responsive** — All `(public)` and `(dashboard)` pages have been fully optimized for mobile devices, including a hamburger slide-out menu.
-10. **TanStack Query hooks** — `lib/hooks/` created with `usePolls`, `usePoll`, `useVote`, `useWallet` wrapping the `lib/api` layer.
-11. **Auth state management** — `lib/stores/auth.ts` created using Zustand to persist auth state and JWT tokens to localStorage.
+## Key files
 
----
-
-## Immediate Next Steps (in order)
-
-### 1. Protected route middleware
-Create `middleware.ts` at root:
-```typescript
-export function middleware(req) {
-  const token = req.cookies.get('voteflow_access_token');
-  if (!token && req.nextUrl.pathname.startsWith('/dashboard')) {
-    return NextResponse.redirect(new URL('/login', req.url));
-  }
-}
-```
-
-### 4. Wire forms to API
-- Login form → `authApi.login()` → store tokens → redirect to `/dashboard`
-- Register form → `authApi.register()` → store tokens → redirect to `/dashboard`
-- Create poll wizard → `pollsApi.create()` → redirect to `/polls/:slug`
-
-### 5. Paystack payment integration
-In `VoteCheckoutModal`, for paid polls:
-```typescript
-const handler = PaystackPop.setup({
-  key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY,
-  email,
-  amount: total * 100,
-  onSuccess: (ref) => votesApi.cast(slug, { contestant_id, quantity, payment_ref: ref.reference }),
-});
-handler.openIframe();
-```
-
----
-
-## Environment Variables Needed
-
-```env
-NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
-NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY=pk_test_...
-```
-
----
-
-## Key Files to Know
-
-| File | Why It Matters |
+| File | Purpose |
 |---|---|
-| `lib/types.ts` | Start here for all domain types |
-| `lib/data/polls.ts` | Replace with API calls |
-| `lib/api/client.ts` | Edit to change auth header logic |
-| `components/poll-card.tsx` | Used everywhere polls are listed |
-| `components/contestant-card.tsx` | Wired to vote modal |
-| `components/vote-checkout-modal.tsx` | The vote + payment UX |
-| `app/(dashboard)/layout.tsx` | Dashboard chrome |
-| `app/(public)/layout.tsx` | Public chrome |
+| `lib/types.ts` | Shared client domain types |
+| `lib/api/client.ts` | API base URL, JWT handling, and refresh flow |
+| `lib/api/` | Authentication, polls, wallet, and notification requests |
+| `lib/hooks/` | TanStack Query hooks for server data |
+| `lib/stores/auth.ts` | Persisted auth state and client token cookie |
+| `proxy.ts` | Protects dashboard and account routes |
+| `components/vote-checkout-modal.tsx` | Free voting and Paystack checkout |
+| `app/(dashboard)/create/page.tsx` | Poll wizard and organizer access request |
 
----
+## Environment variables
 
-## What NOT to Touch
-
-- `globals.css` — design tokens and utility classes are stable; coordinate before changing
-- `components/ui/` — shadcn/ui auto-generated; don't hand-edit
-- `lib/types.ts` — add fields but don't rename/remove without a migration plan
+The client needs `NEXT_PUBLIC_API_URL` and, for paid voting, `NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY`. The backend also needs PostgreSQL, Resend, and Paystack configuration; optional Cloudinary variables enable persistent hosted image uploads. The server setup guide documents every variable and startup step.

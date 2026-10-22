@@ -9,9 +9,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { Bell, CreditCard, Shield, User } from "lucide-react";
 import { useAuthStore } from "@/lib/stores/auth";
+import { authApi } from "@/lib/api/auth";
 
 export default function SettingsPage() {
-  const { user } = useAuthStore();
+  const { user, updateUser } = useAuthStore();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [isSaving, setIsSaving] = useState(false);
@@ -31,12 +32,17 @@ export default function SettingsPage() {
     ? user.name.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2)
     : "U";
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setIsSaving(true);
-    setTimeout(() => {
+    try {
+      const updated = await authApi.updateProfile({ name });
+      updateUser(updated);
       setIsSaving(false);
       toast.success("Settings saved successfully.");
-    }, 1000);
+    } catch (error) {
+      setIsSaving(false);
+      toast.error(error instanceof Error ? error.message : "Unable to save settings.");
+    }
   };
 
   return (
@@ -77,7 +83,8 @@ export default function SettingsPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="email-addr">Email Address</Label>
-                <Input id="email-addr" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                <Input id="email-addr" type="email" value={email} disabled />
+                <p className="text-xs text-muted-foreground">Contact support to change the email address on your account.</p>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="bio">Bio (Optional)</Label>

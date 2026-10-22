@@ -1,65 +1,26 @@
-# Project Status
+# VoteFlow Project Status
 
-**Last Updated:** 2026-06-28  
-**Sprint Phase:** Production-Ready Refactor (Phase 1–6 of 7 complete)
+**Updated:** 2026-10-22
 
----
+## Integration status
 
-## Build Health
+The client and Django API are wired together for the current product flows. Authentication and token refresh, poll browsing and creation, voting and Paystack payment verification, results, wallet and withdrawal requests, notifications, profile updates, and organizer approval use API calls. Transactional email is configured through Resend.
 
-| Check | Status |
+The client production build completed successfully. Django's configuration check passed. The backend has not been connected to PostgreSQL or external provider accounts, and no database migrations were run. Deployment is therefore pending environment setup and database initialization.
+
+## Routes
+
+| Area | Status |
 |---|---|
-| TypeScript (strict) | ✅ No errors |
-| ESLint | ✅ Passing |
-| Next.js Build | ✅ Compiles |
-| Duplicate Routes | ✅ Resolved |
-| Dev Server | ✅ Running on :3000 |
+| Public poll listing and detail | Connected to the API |
+| Login, registration, and password reset | Connected to the API |
+| Dashboard, poll creation, and organizer access | Connected to the API |
+| Wallet, withdrawal requests, and notifications | Connected to the API |
+| Poll results by slug | Connected to the API |
+| Results index, vote-success page, and payment callback page | Not implemented |
 
----
+## Before running the application
 
-## Route Inventory
+Configure PostgreSQL, Resend, Paystack, the client origin, and image storage as described in [the server setup guide](../../voteflow-server/SETUP.md). Copy the server and client environment templates, then apply the repository's migrations once a database is ready.
 
-| Route | Status | Notes |
-|---|---|---|
-| `/` | ✅ Complete | Landing page in `(public)` group (Mobile Responsive) |
-| `/polls` | ✅ Complete | Connected to `lib/data/polls.ts` (Mobile Responsive) |
-| `/polls/[slug]` | ✅ Complete | Real slug lookup, live countdown, vote modal |
-| `/login` | ✅ Complete | Forgot password link wired |
-| `/register` | ✅ Complete | |
-| `/forgot-password` | ✅ Complete | Send + success state |
-| `/dashboard` | ✅ Complete | Stat cards, activity feed (Mobile Responsive) |
-| `/create` | ✅ Complete | 3-step wizard (Mobile Responsive) |
-| `/my-polls` | ✅ Complete | Dedicated manager for creator polls |
-| `/wallet` | ✅ Complete | Balance + transaction table + improved withdraw form |
-| `/analytics` | ✅ Complete | Stats, bar chart, pie chart (Mobile Responsive) |
-| `/settings` | ✅ Complete | Profile, Notifications, Billing, Security tabs (Wired to AuthStore) |
-| `/admin` | ✅ Complete | Link removed from sidebar to keep creator focus |
-| `/notifications` | ✅ Complete | Read/unread states (Mobile Responsive) |
-| `404` (app/not-found.tsx) | ✅ Complete | Gradient 404 with CTAs |
-| `/results` | ⚠️ Stubbed | Planned — needs design |
-| `/vote-success` | ⚠️ Planned | Post-vote success page |
-| `/payment-success` | ⚠️ Planned | Paystack callback |
-
----
-
-## Data Layer
-
-| Layer | Status |
-|---|---|
-| `lib/types.ts` | ✅ Complete — Poll, Contestant, User, Transaction, Wallet interfaces |
-| `lib/data/polls.ts` | ✅ Complete — 6 polls, 3+ contestants each, full typed data |
-| `lib/api/client.ts` | ✅ Complete — JWT-aware fetch wrapper |
-| `lib/api/polls.ts` | ✅ Complete — list, get, create, update, delete, vote, results |
-| `lib/api/auth.ts` | ✅ Complete — login, register, logout, refresh, reset |
-| `lib/api/wallet.ts` | ✅ Complete — get, transactions, withdraw |
-| TanStack Query Hooks | ✅ Complete — `usePolls`, `usePoll`, `useVote`, `useWallet` created |
-| Auth State Management | ✅ Complete — Zustand store with localStorage persistence |
-| Real Django API | ⏳ Not yet — backend not deployed |
-
----
-
-## Open Issues
-- Hooks created but pages still use mock data directly; need to wire them into the UI components
-- Protected route middleware not implemented (to redirect unauthenticated users away from `/dashboard/*`)
-- Paystack payment integration not implemented
-- Dark mode not fully tested across all pages
+The `.kiro` RBAC roadmap contains additional unimplemented scope, including its expanded contest state machine, voter identity verification, security monitoring, integration tests, and migration verification. Its checkpoint items remain open until those steps can be completed against a database and configured services.

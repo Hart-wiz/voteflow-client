@@ -13,8 +13,10 @@ import {
   ShieldCheck,
   Bell,
   List,
+  Compass,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useCurrentUser } from "@/lib/hooks/useCurrentUser";
 
 interface NavItem {
   title: string;
@@ -23,16 +25,22 @@ interface NavItem {
   badge?: string;
 }
 
-const mainNavItems: NavItem[] = [
-  { title: "Overview", href: "/dashboard", icon: LayoutDashboard },
+const overviewNavItem: NavItem = { title: "Overview", href: "/dashboard", icon: LayoutDashboard };
+const organizerNavItems: NavItem[] = [
   { title: "My Polls", href: "/my-polls", icon: List },
   { title: "Create Poll", href: "/create", icon: PlusCircle },
   { title: "Analytics", href: "/analytics", icon: BarChart3 },
   { title: "Wallet", href: "/wallet", icon: CreditCard },
 ];
 
+const voterNavItems: NavItem[] = [
+  { title: "Explore Polls", href: "/polls", icon: Compass },
+];
+
+const adminNavItem: NavItem = { title: "Admin Console", href: "/admin", icon: ShieldCheck };
+
 const secondaryNavItems: NavItem[] = [
-  { title: "Notifications", href: "/notifications", icon: Bell, badge: "3" },
+  { title: "Notifications", href: "/notifications", icon: Bell },
   { title: "Settings", href: "/settings", icon: Settings },
 ];
 
@@ -67,7 +75,14 @@ function NavLink({ item }: { item: NavItem }) {
 
 export function Sidebar({ className }: { className?: string }) {
   const { user, logout } = useAuthStore();
+  const currentUserQuery = useCurrentUser();
   const router = useRouter();
+  const role = currentUserQuery.data?.role ?? user?.role;
+  const mainNavItems = [
+    overviewNavItem,
+    ...(role === "creator" || role === "admin" ? organizerNavItems : voterNavItems),
+  ];
+  if (role === "admin") mainNavItems.push(adminNavItem);
 
   const handleLogout = async () => {
     await logout();

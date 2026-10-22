@@ -1,126 +1,67 @@
 "use client";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart3, TrendingUp, Users, Eye } from "lucide-react";
+import { useMyPolls } from "@/lib/hooks/usePolls";
+import { useWallet } from "@/lib/hooks/useWallet";
+import { Activity, BarChart3, Eye, Loader2, TrendingUp, Users } from "lucide-react";
 
-const statCards = [
-  { label: "Total Impressions", value: "248,930", change: "+12.5%", icon: Eye, color: "text-blue-600" },
-  { label: "Unique Voters",     value: "89,210",  change: "+8.1%",  icon: Users, color: "text-violet-600" },
-  { label: "Votes Cast",        value: "142,854", change: "+19.3%", icon: BarChart3, color: "text-primary" },
-  { label: "Revenue Generated", value: "$45,290", change: "+22.4%", icon: TrendingUp, color: "text-green-600" },
-];
-
-const pollPerformance = [
-  { name: "Miss Universe Nigeria",         votes: 89034,  revenue: "$13,505.10", pct: 95 },
-  { name: "Global Music Awards",           votes: 230450, revenue: "$4,500.00",  pct: 80 },
-  { name: "National Wildlife Photography", votes: 12400,  revenue: "$0.00",      pct: 48 },
-  { name: "Cyber Security Challenge",      votes: 1100,   revenue: "$2,200.00",  pct: 22 },
-  { name: "Fintech UI Challenge",          votes: 5900,   revenue: "$0.00",      pct: 35 },
-];
+const money = (amount: number) => new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN" }).format(amount || 0);
 
 export default function AnalyticsPage() {
-  const max = Math.max(...pollPerformance.map((p) => p.votes));
+  const pollsQuery = useMyPolls();
+  const walletQuery = useWallet();
+  const polls = pollsQuery.data?.results ?? [];
+  const totalVotes = polls.reduce((sum, poll) => sum + poll.votesCount, 0);
+  const activePolls = polls.filter((poll) => ["active", "ending_soon", "new"].includes(poll.status)).length;
+  const paidCount = polls.filter((poll) => poll.isPaid).length;
+  const rankedPolls = [...polls].sort((a, b) => b.votesCount - a.votesCount);
+  const maxVotes = Math.max(1, ...rankedPolls.map((poll) => poll.votesCount));
+  const isLoading = pollsQuery.isLoading || walletQuery.isLoading;
+
+  const stats = [
+    { label: "Your Polls", value: isLoading ? "—" : polls.length.toLocaleString(), icon: Eye, color: "text-blue-600" },
+    { label: "Active Polls", value: isLoading ? "—" : activePolls.toLocaleString(), icon: Users, color: "text-violet-600" },
+    { label: "Votes Cast", value: isLoading ? "—" : totalVotes.toLocaleString(), icon: BarChart3, color: "text-primary" },
+    { label: "Lifetime Earnings", value: isLoading ? "—" : money(walletQuery.data?.lifetimeEarnings ?? 0), icon: TrendingUp, color: "text-green-600" },
+  ];
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Analytics</h1>
-        <p className="text-muted-foreground mt-1">Performance overview across all your voting campaigns.</p>
+        <p className="mt-1 text-muted-foreground">Performance overview across your voting campaigns.</p>
       </div>
+      {(pollsQuery.error || walletQuery.error) && <p className="text-sm text-destructive">Unable to load all analytics data.</p>}
 
-      {/* Stat cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {statCards.map((s) => {
-          const Icon = s.icon;
-          return (
-            <Card key={s.label}>
-              <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                <CardTitle className="text-sm font-medium">{s.label}</CardTitle>
-                <Icon className={`h-4 w-4 ${s.color}`} />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{s.value}</div>
-                <p className="text-xs text-green-600 mt-1 flex items-center gap-1">
-                  <TrendingUp className="h-3 w-3" /> {s.change} from last month
-                </p>
-              </CardContent>
-            </Card>
-          );
+        {stats.map((stat) => {
+          const Icon = stat.icon;
+          return <Card key={stat.label}><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">{stat.label}</CardTitle><Icon className={`h-4 w-4 ${stat.color}`} /></CardHeader><CardContent><div className="text-2xl font-bold">{stat.value}</div></CardContent></Card>;
         })}
       </div>
 
-      {/* Poll performance table */}
       <Card>
-        <CardHeader>
-          <CardTitle>Poll Performance</CardTitle>
-          <CardDescription>Vote volume and revenue for each active campaign.</CardDescription>
-        </CardHeader>
+        <CardHeader><CardTitle>Poll Performance</CardTitle><CardDescription>Vote volume for your campaigns.</CardDescription></CardHeader>
         <CardContent>
-          <div className="space-y-5">
-            {pollPerformance.map((poll) => (
-              <div key={poll.name} className="space-y-1.5">
-                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-baseline text-sm gap-2 sm:gap-0">
-                  <span className="font-medium text-foreground truncate w-full sm:max-w-[60%]">{poll.name}</span>
-                  <div className="flex gap-4 shrink-0 sm:text-right">
-                    <span className="text-muted-foreground">{poll.votes.toLocaleString()} votes</span>
-                    <span className="font-semibold text-foreground w-24">{poll.revenue}</span>
+          {isLoading ? <div className="flex justify-center py-12"><Loader2 className="h-7 w-7 animate-spin" /></div> : rankedPolls.length ? (
+            <div className="space-y-5">
+              {rankedPolls.map((poll) => (
+                <div key={poll.id} className="space-y-1.5">
+                  <div className="flex flex-col gap-2 text-sm sm:flex-row sm:items-baseline sm:justify-between">
+                    <span className="w-full truncate font-medium sm:max-w-[60%]">{poll.title}</span>
+                    <div className="flex shrink-0 items-center gap-4 sm:text-right"><span className="text-muted-foreground">{poll.votesCount.toLocaleString()} votes</span><span className="w-24 font-semibold">{poll.isPaid ? `${money(Number(poll.pricePerVote || 0))}/vote` : "Free"}</span></div>
                   </div>
+                  <div className="h-2 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary transition-all" style={{ width: `${(poll.votesCount / maxVotes) * 100}%` }} /></div>
                 </div>
-                <div className="h-2 bg-muted rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-primary rounded-full transition-all duration-700"
-                    style={{ width: `${(poll.votes / max) * 100}%` }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : <p className="py-10 text-center text-muted-foreground">No poll data available yet.</p>}
         </CardContent>
       </Card>
 
-      {/* Placeholder charts area */}
       <div className="grid gap-4 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Votes Over Time</CardTitle>
-            <CardDescription>Daily vote volume across all campaigns.</CardDescription>
-          </CardHeader>
-          <CardContent className="h-52 flex items-end gap-1.5 pb-4">
-            {[40, 65, 50, 80, 55, 90, 70, 85, 95, 60, 75, 100, 88, 72].map((h, i) => (
-              <div
-                key={i}
-                className="flex-1 bg-primary/80 rounded-t-sm transition-all hover:bg-primary"
-                style={{ height: `${h}%` }}
-              />
-            ))}
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Revenue by Poll Type</CardTitle>
-            <CardDescription>Free vs paid poll revenue breakdown.</CardDescription>
-          </CardHeader>
-          <CardContent className="h-auto sm:h-52 py-4 flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-8">
-            <div className="relative w-32 h-32 shrink-0">
-              <svg viewBox="0 0 36 36" className="w-32 h-32 -rotate-90">
-                <circle cx="18" cy="18" r="15.9" fill="none" stroke="#e5eeff" strokeWidth="3.5" />
-                <circle
-                  cx="18" cy="18" r="15.9"
-                  fill="none" stroke="hsl(var(--primary))" strokeWidth="3.5"
-                  strokeDasharray="62 38" strokeLinecap="round"
-                />
-              </svg>
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-xl font-bold">62%</span>
-                <span className="text-xs text-muted-foreground">Paid</span>
-              </div>
-            </div>
-            <div className="space-y-2 text-sm">
-              <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-primary inline-block" /> Paid polls</div>
-              <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-[#e5eeff] border border-border inline-block" /> Free polls</div>
-            </div>
-          </CardContent>
-        </Card>
+        <Card><CardHeader><CardTitle>Poll Types</CardTitle><CardDescription>Free and paid campaigns in your account.</CardDescription></CardHeader><CardContent className="flex items-center justify-around py-8"><div className="text-center"><div className="text-3xl font-bold">{polls.length - paidCount}</div><div className="text-sm text-muted-foreground">Free</div></div><Activity className="h-8 w-8 text-muted-foreground" /><div className="text-center"><div className="text-3xl font-bold">{paidCount}</div><div className="text-sm text-muted-foreground">Paid</div></div></CardContent></Card>
+        <Card><CardHeader><CardTitle>Voting totals</CardTitle><CardDescription>Votes recorded across your polls.</CardDescription></CardHeader><CardContent className="py-8 text-center"><div className="text-4xl font-bold">{isLoading ? "—" : totalVotes.toLocaleString()}</div><p className="mt-2 text-sm text-muted-foreground">Based on current poll tallies</p></CardContent></Card>
       </div>
     </div>
   );

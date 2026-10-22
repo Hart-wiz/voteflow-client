@@ -9,6 +9,13 @@ export function usePolls(filters?: PollFilters) {
   });
 }
 
+export function useMyPolls() {
+  return useQuery({
+    queryKey: ["polls", "mine"],
+    queryFn: () => pollsApi.myPolls(),
+  });
+}
+
 export function useCreatePoll() {
   const queryClient = useQueryClient();
   return useMutation({

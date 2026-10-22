@@ -1,117 +1,31 @@
-"use client"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart3, CreditCard, Activity, ArrowUpRight } from "lucide-react";
+"use client";
+
+import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useCurrentUser } from "@/lib/hooks/useCurrentUser";
+import { useAuthStore } from "@/lib/stores/auth";
+import { AdminDashboard, OrganizerDashboard, VoterDashboard } from "@/components/dashboard/role-dashboards";
 
 export default function DashboardPage() {
-  return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Overview</h1>
-        <p className="text-muted-foreground mt-1">Here's what's happening with your polls today.</p>
-      </div>
+  const currentUser = useCurrentUser();
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-            <CreditCard className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">$4,523.18</div>
-            <p className="text-xs text-muted-foreground mt-1 flex items-center text-success">
-              <ArrowUpRight className="h-3 w-3 mr-1" /> +20.1% from last month
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Polls</CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">+12</div>
-            <p className="text-xs text-muted-foreground mt-1 text-muted-foreground">
-              +2 since last hour
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Votes</CardTitle>
-            <BarChart3 className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">12,234</div>
-            <p className="text-xs text-muted-foreground mt-1 flex items-center text-success">
-              <ArrowUpRight className="h-3 w-3 mr-1" /> +19% from last month
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Conversion Rate</CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">4.3%</div>
-            <p className="text-xs text-muted-foreground mt-1 text-muted-foreground">
-              +1.2% from last month
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+  if (!isAuthenticated || currentUser.isLoading) {
+    return <div className="flex min-h-64 items-center justify-center"><Loader2 className="h-7 w-7 animate-spin text-muted-foreground" /></div>;
+  }
 
-      <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-7">
-        <Card className="col-span-1 lg:col-span-4">
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>
-              A breakdown of recent votes and interactions.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-8">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="flex items-center">
-                  <div className="space-y-1 overflow-hidden pr-4">
-                    <p className="text-sm font-medium leading-none truncate">New vote on "Miss Universe Nigeria"</p>
-                    <p className="text-sm text-muted-foreground truncate">
-                      Anonymous user voted for Amaka Eze
-                    </p>
-                  </div>
-                  <div className="ml-auto font-medium text-success shrink-0">+$1.50</div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="col-span-1 lg:col-span-3">
-          <CardHeader>
-            <CardTitle>Top Performing Polls</CardTitle>
-            <CardDescription>
-              Polls generating the most revenue this week.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-8">
-              <div className="flex items-center">
-                <div className="space-y-1">
-                  <p className="text-sm font-medium leading-none">Miss Universe Nigeria</p>
-                  <p className="text-sm text-muted-foreground">89,034 votes</p>
-                </div>
-                <div className="ml-auto font-bold">$13,505.10</div>
-              </div>
-              <div className="flex items-center">
-                <div className="space-y-1">
-                  <p className="text-sm font-medium leading-none">Global Music Awards</p>
-                  <p className="text-sm text-muted-foreground">230,450 votes</p>
-                </div>
-                <div className="ml-auto font-bold">$4,500.00</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+  if (currentUser.error || !currentUser.data) {
+    return (
+      <div className="mx-auto max-w-lg py-16 text-center">
+        <h1 className="text-xl font-semibold">Dashboard unavailable</h1>
+        <p className="mt-2 text-sm text-muted-foreground">We could not load your account role and dashboard data.</p>
+        <Button className="mt-5" variant="outline" onClick={() => void currentUser.refetch()}>Try again</Button>
       </div>
-    </div>
-  );
+    );
+  }
+
+  const user = currentUser.data;
+  if (user.role === "admin") return <AdminDashboard user={user} />;
+  if (user.role === "creator") return <OrganizerDashboard user={user} />;
+  return <VoterDashboard user={user} />;
 }

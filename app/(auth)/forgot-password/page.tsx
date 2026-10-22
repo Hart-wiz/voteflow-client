@@ -2,21 +2,34 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
+import { authApi } from "@/lib/api/auth";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
-  const [sent, setSent] = useState(false);
+  const [stage, setStage] = useState<"request" | "confirm" | "done">("request");
+  const [code, setCode] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    if (!email || loading) return;
     setLoading(true);
-    setTimeout(() => {
+    try {
+      if (stage === "request") {
+        await authApi.requestPasswordReset({ email });
+        setStage("confirm");
+        toast.success("If the account exists, a reset code has been sent.");
+      } else {
+        await authApi.confirmPasswordReset({ email, code, password });
+        setStage("done");
+        toast.success("Your password has been reset.");
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Unable to reset your password.");
+    } finally {
       setLoading(false);
-      setSent(true);
-      toast.success("Reset link sent — check your email.");
-    }, 1200);
+    }
   };
 
   return (
@@ -29,7 +42,7 @@ export default function ForgotPasswordPage() {
 
         <div className="w-full max-w-md z-10">
           <div className="bg-white border border-[#c3c6d7] rounded-xl soft-glow-shadow p-10">
-            {!sent ? (
+            {stage !== "done" ? (
               <>
                 <div className="mb-8 text-center">
                   <div className="w-14 h-14 rounded-full bg-[#dbe1ff] flex items-center justify-center mx-auto mb-4">
@@ -37,7 +50,7 @@ export default function ForgotPasswordPage() {
                   </div>
                   <h1 className="font-geist text-[28px] font-semibold text-[#0b1c30] mb-2">Forgot password?</h1>
                   <p className="font-inter text-[15px] text-[#434655]">
-                    No problem. Enter your email and we&apos;ll send you a secure reset link.
+                    {stage === "request" ? "Enter your email and we’ll send you a one-time reset code." : "Enter the code from your email and choose a new password."}
                   </p>
                 </div>
 
@@ -50,18 +63,31 @@ export default function ForgotPasswordPage() {
                       id="reset-email"
                       type="email"
                       required
+                      disabled={stage === "confirm"}
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="name@company.com"
                       className="w-full px-4 py-3 border border-[#c3c6d7] rounded-lg font-inter text-[15px] focus:ring-2 focus:ring-[#004ac6]/20 focus:border-[#004ac6] outline-none transition-all"
                     />
                   </div>
+                  {stage === "confirm" && (
+                    <>
+                      <div className="space-y-1.5">
+                        <label htmlFor="reset-code" className="font-geist text-[14px] font-medium text-[#0b1c30]">Reset code</label>
+                        <input id="reset-code" inputMode="numeric" autoComplete="one-time-code" required minLength={6} maxLength={6} value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))} className="w-full px-4 py-3 border border-[#c3c6d7] rounded-lg font-inter text-[15px] focus:ring-2 focus:ring-[#004ac6]/20 focus:border-[#004ac6] outline-none transition-all" />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label htmlFor="new-password" className="font-geist text-[14px] font-medium text-[#0b1c30]">New password</label>
+                        <input id="new-password" type="password" autoComplete="new-password" required minLength={12} value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-3 border border-[#c3c6d7] rounded-lg font-inter text-[15px] focus:ring-2 focus:ring-[#004ac6]/20 focus:border-[#004ac6] outline-none transition-all" />
+                      </div>
+                    </>
+                  )}
                   <button
                     type="submit"
-                    disabled={loading || !email}
+                    disabled={loading || !email || (stage === "confirm" && (code.length !== 6 || password.length < 12))}
                     className="w-full py-3 bg-[#004ac6] text-white rounded-lg font-geist text-[14px] font-medium hover:bg-[#2563eb] active:scale-[0.98] transition-all shadow-md disabled:opacity-60"
                   >
-                    {loading ? "Sending..." : "Send Reset Link"}
+                    {loading ? "Please wait..." : stage === "request" ? "Send Reset Code" : "Reset Password"}
                   </button>
                 </form>
               </>
@@ -70,12 +96,12 @@ export default function ForgotPasswordPage() {
                 <div className="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
                   <span className="material-symbols-outlined text-green-600 text-[28px]" style={{ fontVariationSettings: '"FILL" 1' }}>mark_email_read</span>
                 </div>
-                <h2 className="font-geist text-[24px] font-semibold text-[#0b1c30] mb-2">Check your email</h2>
+                <h2 className="font-geist text-[24px] font-semibold text-[#0b1c30] mb-2">Password reset</h2>
                 <p className="font-inter text-[15px] text-[#434655] mb-6">
-                  We&apos;ve sent a password reset link to <strong>{email}</strong>. It expires in 15 minutes.
+                  Your password for <strong>{email}</strong> has been changed. You can sign in now.
                 </p>
                 <button
-                  onClick={() => setSent(false)}
+                  onClick={() => { setStage("request"); setEmail(""); setCode(""); setPassword(""); }}
                   className="font-geist text-[14px] text-[#004ac6] hover:underline"
                 >
                   Try a different email

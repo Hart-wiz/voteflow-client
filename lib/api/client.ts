@@ -8,7 +8,26 @@
  */
 
 export const BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
+  (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1").replace(/\/$/, "");
+
+export interface PaginatedResponse<T> {
+  results: T[];
+  count: number;
+  next: string | null;
+  previous: string | null;
+}
+
+/** Normalize Django Ninja's `items` page into the frontend's `results` shape. */
+export function normalizePaginatedResponse<T>(
+  page: Partial<PaginatedResponse<T>> & { items?: T[] }
+): PaginatedResponse<T> {
+  return {
+    results: page.results ?? page.items ?? [],
+    count: page.count ?? 0,
+    next: page.next ?? null,
+    previous: page.previous ?? null,
+  };
+}
 
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
@@ -64,7 +83,7 @@ async function request<TResponse, TBody = unknown>(
   const res = await fetch(`${BASE_URL}${path}`, {
     method,
     headers: resolvedHeaders,
-    body: isFormData ? (body as unknown as BodyInit) : (body ? JSON.stringify(body) : undefined),
+    body: isFormData ? (body as unknown as BodyInit) : (body !== undefined ? JSON.stringify(body) : undefined),
   });
 
   const json = await res.json().catch(() => null);
@@ -100,11 +119,11 @@ async function request<TResponse, TBody = unknown>(
             const retryRes = await fetch(`${BASE_URL}${path}`, {
               method,
               headers: resolvedHeaders,
-              body: body ? JSON.stringify(body) : undefined,
+              body: isFormData ? (body as unknown as BodyInit) : (body !== undefined ? JSON.stringify(body) : undefined),
             });
             
             if (retryRes.ok) {
-              return (await retryRes.json()) as TResponse;
+              return (await retryRes.json().catch(() => null)) as TResponse;
             }
           }
         }
@@ -112,9 +131,11 @@ async function request<TResponse, TBody = unknown>(
         console.error("Token refresh failed", e);
       }
       
-      // If refresh failed or wasn't possible, force logout via event or redirect
-      // (The store's logout logic or a global event would be ideal here)
-      // window.location.href = "/login";
+      localStorage.removeItem("voteflow-auth");
+      document.cookie = "voteflow-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+      if (window.location.pathname !== "/login") {
+        window.location.assign(`/login?redirect=${encodeURIComponent(window.location.pathname)}`);
+      }
     }
 
     throw new ApiError(

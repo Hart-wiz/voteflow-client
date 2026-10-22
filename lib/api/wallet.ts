@@ -1,4 +1,4 @@
-import { apiClient } from "./client";
+import { apiClient, normalizePaginatedResponse } from "./client";
 import type { WalletData, Transaction } from "@/lib/types";
 
 interface WithdrawPayload {
@@ -19,7 +19,9 @@ export const walletApi = {
 
   /** GET /wallet/transactions/ */
   transactions: (page = 1) =>
-    apiClient.get<{ results: Transaction[]; count: number }>(`/wallet/transactions/?page=${page}`),
+    apiClient
+      .get<{ results?: Transaction[]; items?: Transaction[]; count?: number }>(`/wallet/transactions/?page=${page}`)
+      .then(normalizePaginatedResponse),
 
   /** POST /wallet/withdraw/ */
   withdraw: (payload: WithdrawPayload) =>

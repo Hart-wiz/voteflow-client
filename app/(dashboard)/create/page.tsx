@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,11 +12,33 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { POLL_CATEGORIES } from "@/lib/constants";
 import { useCreatePoll } from "@/lib/hooks/usePolls";
+import { authApi } from "@/lib/api/auth";
+import { useCurrentUser } from "@/lib/hooks/useCurrentUser";
 
 export default function CreatePollPage() {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [organization, setOrganization] = useState("");
+  const queryClient = useQueryClient();
+  const currentUserQuery = useCurrentUser();
+  const user = currentUserQuery.data;
+  const organizerRequestQuery = useQuery({
+    queryKey: ["organizer-request-status", user?.id],
+    queryFn: authApi.organizerRequestStatus,
+    enabled: user?.role === "user",
+  });
+  const requestMutation = useMutation({
+    mutationFn: () => authApi.requestOrganizerAccess({ business_name: organization.trim() }),
+    onSuccess: async (result) => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["organizer-request-status"] }),
+        queryClient.invalidateQueries({ queryKey: ["auth", "me"] }),
+      ]);
+      toast.success(result.status === "approved" ? "Organizer access is active." : "Your organizer request was sent for review.");
+    },
+    onError: (error) => toast.error(error instanceof Error ? error.message : "Unable to submit your request."),
+  });
 
   const [pollData, setPollData] = useState<{
     title: string;
@@ -65,6 +88,7 @@ export default function CreatePollPage() {
       formData.append("description", pollData.description);
       formData.append("category", pollData.category);
       formData.append("isPaid", pollData.type === "paid" ? "true" : "false");
+      formData.append("status", "active");
       if (pollData.type === "paid" && pollData.price) {
         formData.append("pricePerVote", pollData.price);
       }
@@ -74,19 +98,17 @@ export default function CreatePollPage() {
         formData.append("image", pollData.image);
       }
 
-      // Append contestants
+      formData.append("contestants", JSON.stringify(contestants.map(({ name, description }) => ({ name, description }))));
       contestants.forEach((c, i) => {
-        formData.append(`contestants[${i}]name`, c.name);
-        formData.append(`contestants[${i}]description`, c.description);
         if (c.image) {
-          formData.append(`contestants[${i}]image`, c.image);
+          formData.append(`contestant_${i}_image`, c.image);
         }
       });
 
-      await createPoll.mutateAsync(formData);
+      const createdPoll = await createPoll.mutateAsync(formData);
       
       toast.success("Poll successfully created and is now live!");
-      router.push("/my-polls");
+      router.push(`/polls/${createdPoll.slug}`);
     } catch (error: any) {
       console.error(error);
       toast.error(error?.message || "Failed to create poll. Please try again.");
@@ -94,6 +116,54 @@ export default function CreatePollPage() {
       setIsSubmitting(false);
     }
   };
+
+  if (currentUserQuery.isLoading || (!user && !currentUserQuery.error)) {
+    return <div className="flex justify-center py-24"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>;
+  }
+
+  if (currentUserQuery.error || !user) {
+    return <p className="py-16 text-center text-destructive">Unable to confirm your account role. Please refresh and try again.</p>;
+  }
+
+  if (user.role !== "creator" && user.role !== "admin") {
+    const organizerRequest = organizerRequestQuery.data && "is_approved" in organizerRequestQuery.data
+      ? organizerRequestQuery.data
+      : null;
+    return (
+      <div className="mx-auto max-w-2xl space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Organizer access</h1>
+          <p className="mt-1 text-muted-foreground">An administrator must approve organizer access before you can publish polls.</p>
+        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>Request approval</CardTitle>
+            <CardDescription>Tell us which organization you represent so an administrator can review your request.</CardDescription>
+          </CardHeader>
+          {organizerRequestQuery.isLoading ? (
+            <CardContent><div className="flex justify-center py-4"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div></CardContent>
+          ) : organizerRequestQuery.error ? (
+            <CardContent><p className="text-sm text-destructive">Could not check your request status. Refresh and try again.</p></CardContent>
+          ) : organizerRequest && !organizerRequest.is_approved ? (
+            <CardContent><p className="text-sm text-muted-foreground">Your request for <span className="font-medium text-foreground">{organizerRequest.business_name || "organizer access"}</span> is pending review. You can return here after approval.</p></CardContent>
+          ) : (
+            <>
+              <CardContent className="space-y-3">
+                <Label htmlFor="organization-name">Organization name</Label>
+                <Input id="organization-name" value={organization} onChange={(event) => setOrganization(event.target.value)} placeholder="Organization or campaign name" />
+              </CardContent>
+              <CardFooter>
+                <Button onClick={() => requestMutation.mutate()} disabled={!organization.trim() || requestMutation.isPending}>
+                  {requestMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Request organizer access
+                </Button>
+              </CardFooter>
+            </>
+          )}
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
@@ -199,10 +269,12 @@ export default function CreatePollPage() {
                     <TabsTrigger value="paid">Paid Voting (Monetized)</TabsTrigger>
                   </TabsList>
                   <TabsContent value="paid" className="pt-4 space-y-2">
-                    <Label htmlFor="price">Price Per Vote ($)</Label>
+                    <Label htmlFor="price">Price Per Vote (NGN)</Label>
                     <Input 
                       id="price" 
                       type="number" 
+                      min="1"
+                      step="0.01"
                       placeholder="1.50" 
                       value={pollData.price}
                       onChange={(e) => setPollData({...pollData, price: e.target.value})}
@@ -213,7 +285,7 @@ export default function CreatePollPage() {
               </div>
             </CardContent>
             <CardFooter className="flex justify-end">
-              <Button onClick={() => setStep(2)} disabled={!pollData.title}>
+              <Button onClick={() => setStep(2)} disabled={!pollData.title || !pollData.endsAt || (pollData.type === "paid" && (!pollData.price || Number(pollData.price) <= 0))}>
                 Next Step <ChevronRight className="ml-2 h-4 w-4" />
               </Button>
             </CardFooter>
@@ -314,7 +386,7 @@ export default function CreatePollPage() {
                   {pollData.type === 'paid' && (
                     <div>
                       <span className="text-muted-foreground">Price per Vote:</span>
-                      <p className="font-medium">${pollData.price}</p>
+                    <p className="font-medium">₦{pollData.price}</p>
                     </div>
                   )}
                   <div>
@@ -326,7 +398,7 @@ export default function CreatePollPage() {
             </CardContent>
             <CardFooter className="flex justify-between">
               <Button variant="outline" onClick={() => setStep(2)} disabled={isSubmitting}>Back</Button>
-              <Button onClick={handlePublish} disabled={isSubmitting}>
+              <Button onClick={handlePublish} disabled={isSubmitting || !pollData.endsAt || contestants.some((c) => !c.name.trim())}>
                 {isSubmitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
