@@ -138,9 +138,9 @@ export function CustomSelect({
         disabled={disabled}
         onClick={() => (open ? setOpen(false) : openAt(selectedIndex >= 0 ? selectedIndex : 0))}
         onKeyDown={handleKeyDown}
-        className={className ?? "flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"}
+        className={`flex items-center justify-between gap-2 text-left ${className ?? "h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"}`}
       >
-        <span className={selectedOption ? "truncate" : "truncate text-muted-foreground"}>
+        <span className={`min-w-0 flex-1 truncate text-left ${selectedOption ? "" : "text-muted-foreground"}`}>
           {selectedOption?.label ?? placeholder}
         </span>
         <ChevronDown aria-hidden="true" className={`h-4 w-4 shrink-0 opacity-60 transition-transform ${open ? "rotate-180" : ""}`} />
