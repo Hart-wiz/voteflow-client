@@ -111,6 +111,7 @@ This document is designed for the backend developer (or AI agent) building the *
 - `DELETE /polls/<slug>/` (Requires Auth, Organizer only)
 
 ### Voting (`/polls/<slug>/vote/`)
+- `POST /polls/<slug>/checkout/` creates a pending server payment record for a paid poll and returns a server-calculated amount, unique reference, currency, and public key for the embedded Paystack InlineJS popup.
 - `POST /polls/<slug>/vote/`
   - **Payload:** 
     ```json
@@ -122,7 +123,7 @@ This document is designed for the backend developer (or AI agent) building the *
     }
     ```
   - **Behavior (CRITICAL):**
-    1. If `poll.isPaid` is true, the backend **must** call the Paystack API using `payment_ref` to verify the transaction was successful and matches `quantity * poll.pricePerVote`.
+    1. For a paid poll, first create checkout through `/polls/<slug>/checkout/`; the backend then verifies the returned reference with Paystack and checks its saved poll, contestant, quantity, email, amount, and currency before counting the vote.
     2. Increment the `votes` count for the contestant by `quantity`.
     3. If paid, create a `Transaction` (type: earning) for the poll's organizer, increasing their wallet balance.
   - **Response:** `{ "success": true, "message": "Vote cast successfully" }`

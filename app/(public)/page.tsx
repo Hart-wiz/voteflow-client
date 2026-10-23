@@ -1,233 +1,188 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import {
+  ArrowRight,
+  BarChart3,
+  Check,
+  CircleDollarSign,
+  Clock3,
+  ShieldCheck,
+  UsersRound,
+  Vote,
+} from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "VoteFlow — Powering the World's Most Engaging Contests",
+  title: "VoteFlow — Create polls. Make every vote count.",
   description:
-    "The premium platform for organizations, creators, and brands to host secure, high-stakes voting campaigns. Create free or paid polls in minutes.",
+    "Create a poll, share it with your community, and follow every response in one clear workspace.",
 };
+
+const steps = [
+  {
+    number: "01",
+    title: "Set up your poll",
+    description: "Add a title, a closing time, and the candidates or choices people can vote for.",
+    icon: Vote,
+  },
+  {
+    number: "02",
+    title: "Share one link",
+    description: "Invite your community to vote from any device, without a complicated setup.",
+    icon: UsersRound,
+  },
+  {
+    number: "03",
+    title: "Follow the results",
+    description: "Keep an eye on participation and results from your organizer dashboard.",
+    icon: BarChart3,
+  },
+];
+
+const features = [
+  {
+    title: "A clear voting experience",
+    description: "Give voters a focused page with the poll details and choices they need to participate.",
+    icon: Check,
+  },
+  {
+    title: "Polls that fit your event",
+    description: "Choose a category, add contestants, and decide whether voting is free or paid.",
+    icon: CircleDollarSign,
+  },
+  {
+    title: "One place to manage it",
+    description: "Review your polls, see activity, and manage your organizer profile from one workspace.",
+    icon: ShieldCheck,
+  },
+];
 
 export default function LandingPage() {
   return (
-    <>
-      <div className="flex flex-col">
-        {/* Hero Section */}
-        <section className="relative pt-[4rem] pb-[2.5rem] px-[16px] md:px-[48px] overflow-hidden">
-          <div className="absolute inset-0 bg-grid-pattern -z-10"></div>
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-gradient-to-b from-[#dbe1ff] to-transparent opacity-40 -z-10 blur-3xl pointer-events-none"></div>
-
-          <div className="max-w-[1280px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="flex flex-col gap-6 text-center lg:text-left z-10">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#dce9ff] text-[#003ea8] font-geist text-[12px] font-semibold leading-[1] w-fit mx-auto lg:mx-0">
-                <span className="material-symbols-outlined text-[16px]">campaign</span>
-                New: Advanced Monetization Tools
-              </div>
-
-              <h1 className="font-geist text-[36px] md:text-[48px] font-bold leading-[1.2] md:leading-[1.1] tracking-[-0.02em] text-[#0b1c30]">
-                Powering the World&apos;s Most{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#004ac6] to-[#712ae2]">
-                  Engaging Contests
-                </span>
-              </h1>
-
-              <p className="font-inter text-[18px] leading-[1.6] text-[#434655] max-w-xl mx-auto lg:mx-0">
-                The premium platform for organizations, creators, and brands to
-                host secure, high-stakes voting campaigns. Create free or paid
-                polls in minutes.
-              </p>
-
-              <div className="flex flex-col sm:flex-row items-center gap-4 mt-4 justify-center lg:justify-start">
-                <Link
-                  href="/register"
-                  className="btn-primary w-full sm:w-auto font-geist text-[14px] font-medium leading-[1] tracking-[0.01em] px-8 py-4 rounded-lg shadow-lg flex items-center justify-center gap-2 md:px-12 md:py-6 text-lg hover:scale-105 transition-all duration-300 soft-glow-shadow bg-[#2563eb] text-[#eeefff]"
-                >
-                  Create Contest | Poll
-                  <span className="material-symbols-outlined text-[20px]">add_circle</span>
-                </Link>
-                <Link
-                  href="/polls"
-                  className="btn-secondary w-full sm:w-auto text-[#0b1c30] font-geist text-[14px] font-medium leading-[1] tracking-[0.01em] px-8 py-4 rounded-lg flex items-center justify-center gap-2 bg-[#ffffff]/80 backdrop-blur-md border-2 border-[#004ac6]/20 hover:border-[#004ac6] transition-all"
-                >
-                  <span className="material-symbols-outlined text-[20px]">explore</span>
-                  Discover Contests
-                </Link>
-              </div>
-
-              <div className="mt-8 flex items-center justify-center lg:justify-start gap-4 text-[#434655]">
-                <div className="flex -space-x-2">
-                  <div className="w-8 h-8 rounded-full bg-[#d3e4fe] border-2 border-[#f8f9ff] flex items-center justify-center text-xs font-bold text-[#004ac6]">A</div>
-                  <div className="w-8 h-8 rounded-full bg-[#dce9ff] border-2 border-[#f8f9ff] flex items-center justify-center text-xs font-bold text-[#712ae2]">B</div>
-                  <div className="w-8 h-8 rounded-full bg-[#b4c5ff] border-2 border-[#f8f9ff] flex items-center justify-center text-xs font-bold text-[#00174b]">C</div>
-                </div>
-                <p className="font-inter text-[14px] leading-[1.5]">Trusted by 10,000+ campaign organizers</p>
-              </div>
+    <div className="overflow-hidden bg-[#f8f9ff] text-[#0b1c30]">
+      <section className="relative px-4 pb-20 pt-14 sm:px-8 sm:pb-24 sm:pt-20 lg:px-12 lg:pt-24">
+        <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 -z-0 h-[560px] bg-[radial-gradient(ellipse_at_70%_15%,rgba(180,197,255,0.5),transparent_55%),radial-gradient(ellipse_at_15%_0%,rgba(226,233,255,0.8),transparent_48%)]" />
+        <div className="relative mx-auto grid max-w-7xl items-center gap-14 lg:grid-cols-[1.02fr_0.98fr] lg:gap-10">
+          <div className="max-w-2xl">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#c3c6d7] bg-white/80 px-3.5 py-2 text-xs font-semibold text-[#33415c] shadow-sm">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#e5eeff] text-[#004ac6]"><Vote className="h-3.5 w-3.5" /></span>
+              A simpler way to run community polls
             </div>
-
-            {/* Hero Visual */}
-            <div className="relative w-full aspect-[4/3] lg:aspect-auto lg:h-[600px] rounded-xl overflow-hidden soft-glow-shadow border border-[#c3c6d7] bg-[#ffffff] z-10 flex items-center justify-center group">
-              <div className="absolute inset-0 bg-[#eff4ff] flex flex-col p-6 overflow-hidden">
-                <div className="flex justify-between items-center mb-6 pb-4 border-b border-[#c3c6d7]">
-                  <div className="flex gap-2 items-center">
-                    <div className="w-3 h-3 rounded-full bg-[#ba1a1a]"></div>
-                    <div className="w-3 h-3 rounded-full bg-[#ffb596]"></div>
-                    <div className="w-3 h-3 rounded-full bg-[#004ac6]"></div>
-                  </div>
-                  <div className="bg-[#e5eeff] px-4 py-1 rounded-md text-xs font-medium text-[#004ac6]">Dashboard / Active Campaign</div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4 h-full">
-                  <div className="col-span-2 bg-[#f8f9ff] rounded-lg border border-[#c3c6d7] p-4 flex flex-col justify-between group-hover:border-[#004ac6]/30 transition-colors">
-                    <div className="flex justify-between items-start">
-                      <h3 className="font-geist text-sm font-bold text-[#0b1c30]">Global Photography Awards 2024</h3>
-                      <span className="bg-[#d3e4fe] text-[#004ac6] text-[10px] px-2 py-1 rounded-full font-bold">LIVE</span>
-                    </div>
-                    <div className="mt-4">
-                      <div className="flex justify-between text-xs text-[#434655] mb-1">
-                        <span>Total Votes</span>
-                        <span className="font-bold text-[#0b1c30]">124,592</span>
-                      </div>
-                      <div className="w-full bg-[#e5eeff] rounded-full h-2">
-                        <div className="bg-[#004ac6] h-2 rounded-full w-[75%]"></div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-[#f8f9ff] rounded-lg border border-[#c3c6d7] p-4 group-hover:border-[#004ac6]/30 transition-colors flex flex-col justify-center items-center text-center">
-                    <span className="material-symbols-outlined text-[#712ae2] text-2xl mb-2" style={{ fontVariationSettings: '"FILL" 1' }}>payments</span>
-                    <h4 className="text-xs text-[#434655]">Revenue Generated</h4>
-                    <p className="text-lg font-bold text-[#0b1c30] mt-1">$45,290</p>
-                  </div>
-
-                  <div className="bg-[#f8f9ff] rounded-lg border border-[#c3c6d7] p-4 group-hover:border-[#004ac6]/30 transition-colors flex flex-col justify-center items-center text-center">
-                    <span className="material-symbols-outlined text-[#004ac6] text-2xl mb-2" style={{ fontVariationSettings: '"FILL" 1' }}>group</span>
-                    <h4 className="text-xs text-[#434655]">Active Voters</h4>
-                    <p className="text-lg font-bold text-[#0b1c30] mt-1">8,402</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Social Proof Bar */}
-        <section className="py-[2.5rem] bg-[#f8f9ff] border-y border-[#c3c6d7] px-[16px] md:px-[48px]">
-          <div className="max-w-[1280px] mx-auto flex flex-col items-center">
-            <p className="font-geist text-[12px] font-semibold leading-[1] tracking-wider text-[#434655] uppercase mb-8">Trusted by industry leaders</p>
-            <div className="flex flex-wrap justify-center gap-8 md:gap-16 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
-              <div className="text-xl font-bold font-geist tracking-tighter">AcmeCorp</div>
-              <div className="text-xl font-bold font-geist tracking-widest uppercase">Global Awards</div>
-              <div className="text-xl font-bold font-geist italic">NextGen Fintech</div>
-              <div className="text-xl font-bold font-geist">Vanguard Media</div>
-            </div>
-          </div>
-        </section>
-
-        {/* How It Works */}
-        <section className="py-[4rem] px-[16px] md:px-[48px] relative">
-          <div className="max-w-[1280px] mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="font-geist text-[32px] font-semibold leading-[1.25] tracking-[-0.01em] text-[#0b1c30] mb-4">From Idea to Revenue in Minutes</h2>
-              <p className="font-inter text-[18px] leading-[1.6] text-[#434655] max-w-2xl mx-auto">A streamlined workflow designed for maximum engagement and frictionless monetization.</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
-              <div className="hidden md:block absolute top-12 left-[16%] right-[16%] h-px bg-[#c3c6d7] z-0"></div>
-
-              {[
-                { icon: "edit_square", color: "#004ac6", title: "1. Create", desc: "Set up your poll, define categories, and configure free or paid voting tiers effortlessly." },
-                { icon: "share", color: "#712ae2", title: "2. Engage", desc: "Share your customized, mobile-optimized voting page to gather votes from anywhere." },
-                { icon: "account_balance", color: "#943700", title: "3. Monetize", desc: "Earn revenue from paid votes with instant payouts and enterprise-grade security." },
-              ].map((step) => (
-                <div key={step.title} className="relative z-10 flex flex-col items-center text-center group">
-                  <div className="w-24 h-24 rounded-full bg-[#f8f9ff] border-4 border-[#f8f9ff] shadow-sm flex items-center justify-center mb-6 group-hover:border-[#dbe1ff] transition-colors duration-300">
-                    <span className="material-symbols-outlined text-4xl" style={{ color: step.color, fontVariationSettings: '"FILL" 1' }}>{step.icon}</span>
-                  </div>
-                  <h3 className="font-geist text-[24px] font-semibold leading-[1.3] text-[#0b1c30] mb-2">{step.title}</h3>
-                  <p className="font-inter text-[16px] leading-[1.5] text-[#434655]">{step.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Features Bento Grid */}
-        <section className="py-[4rem] bg-[#ffffff] px-[16px] md:px-[48px]" id="features">
-          <div className="max-w-[1280px] mx-auto">
-            <div className="mb-12">
-              <h2 className="font-geist text-[32px] font-semibold leading-[1.25] tracking-[-0.01em] text-[#0b1c30] mb-4">Enterprise Power, Consumer Feel</h2>
-              <p className="font-inter text-[18px] leading-[1.6] text-[#434655] max-w-2xl">Everything you need to run secure, large-scale voting events.</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 md:grid-rows-2 gap-6 h-auto md:h-[600px]">
-
-              <div className="interactive-card col-span-1 md:col-span-2 md:row-span-1 bg-[#f8f9ff] border border-[#c3c6d7] rounded-xl p-8 flex flex-col md:flex-row gap-6 overflow-hidden relative soft-glow-shadow">
-                <div className="flex-1 z-10">
-                  <div className="w-12 h-12 rounded-lg bg-[#2563eb] text-[#eeefff] flex items-center justify-center mb-6">
-                    <span className="material-symbols-outlined">analytics</span>
-                  </div>
-                  <h3 className="font-geist text-[24px] font-semibold leading-[1.3] text-[#0b1c30] mb-3">Real-time Analytics</h3>
-                  <p className="font-inter text-[16px] leading-[1.5] text-[#434655]">Watch votes and revenue roll in live. Our dashboard provides deep demographic insights and fraud detection metrics instantly.</p>
-                </div>
-                <div className="flex-1 relative min-h-[150px] md:min-h-0 bg-[#eff4ff] rounded-lg border border-[#c3c6d7]/50 flex items-end p-4">
-                  <div className="w-full flex items-end gap-2 h-32">
-                    <div className="w-1/4 bg-[#b4c5ff] rounded-t-sm h-[40%]"></div>
-                    <div className="w-1/4 bg-[#dbe1ff] rounded-t-sm h-[60%]"></div>
-                    <div className="w-1/4 bg-[#004ac6] rounded-t-sm h-[85%]"></div>
-                    <div className="w-1/4 bg-[#8a4cfc] rounded-t-sm h-[100%]"></div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="interactive-card col-span-1 md:row-span-1 bg-[#f8f9ff] border border-[#c3c6d7] rounded-xl p-8 flex flex-col soft-glow-shadow">
-                <div className="w-12 h-12 rounded-lg bg-[#d3e4fe] text-[#004ac6] flex items-center justify-center mb-6">
-                  <span className="material-symbols-outlined">shield_lock</span>
-                </div>
-                <h3 className="font-geist text-[24px] font-semibold leading-[1.3] text-[#0b1c30] mb-3">Fraud Prevention</h3>
-                <p className="font-inter text-[16px] leading-[1.5] text-[#434655]">Bank-level security, IP tracking, and device fingerprinting ensure every vote is legitimate.</p>
-              </div>
-
-              <div className="interactive-card col-span-1 md:row-span-1 bg-[#f8f9ff] border border-[#c3c6d7] rounded-xl p-8 flex flex-col soft-glow-shadow">
-                <div className="w-12 h-12 rounded-lg bg-[#d3e4fe] text-[#004ac6] flex items-center justify-center mb-6">
-                  <span className="material-symbols-outlined">smartphone</span>
-                </div>
-                <h3 className="font-geist text-[24px] font-semibold leading-[1.3] text-[#0b1c30] mb-3">Mobile-First Experience</h3>
-                <p className="font-inter text-[16px] leading-[1.5] text-[#434655]">Over 80% of votes happen on mobile. Our voting interfaces are obsessively optimized for tap-friendly speed.</p>
-              </div>
-
-              <div className="interactive-card col-span-1 md:col-span-2 md:row-span-1 bg-gradient-to-br from-[#f8f9ff] to-[#e5eeff] border border-[#c3c6d7] rounded-xl p-8 flex flex-col justify-center relative overflow-hidden soft-glow-shadow">
-                <div className="absolute -right-10 -bottom-10 opacity-10">
-                  <span className="material-symbols-outlined text-[200px]">payments</span>
-                </div>
-                <div className="relative z-10 w-full md:w-2/3">
-                  <div className="w-12 h-12 rounded-lg bg-[#712ae2] text-[#ffffff] flex items-center justify-center mb-6">
-                    <span className="material-symbols-outlined">paid</span>
-                  </div>
-                  <h3 className="font-geist text-[24px] font-semibold leading-[1.3] text-[#0b1c30] mb-3">Secure Paid Voting</h3>
-                  <p className="font-inter text-[16px] leading-[1.5] text-[#434655]">Turn engagement into revenue. Accept global payments securely with integrated processing and instant payouts.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Final CTA */}
-        <section className="py-[4rem] px-[16px] md:px-[48px] bg-[#004ac6] text-[#ffffff] text-center relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-20 pointer-events-none">
-            <div className="absolute -top-24 -left-24 w-96 h-96 bg-[#003ea8] rounded-full mix-blend-multiply filter blur-3xl"></div>
-            <div className="absolute top-1/2 right-10 w-72 h-72 bg-[#712ae2] rounded-full mix-blend-multiply filter blur-3xl"></div>
-          </div>
-          <div className="max-w-3xl mx-auto relative z-10">
-            <h2 className="font-geist text-[36px] md:text-[48px] font-bold leading-[1.2] md:leading-[1.1] tracking-[-0.02em] mb-6">Ready to launch your first campaign?</h2>
-            <p className="font-inter text-[18px] leading-[1.6] text-[#dbe1ff] mb-8">Join thousands of organizations running fair, secure, and profitable voting events on VoteFlow.</p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/register" className="bg-[#ffffff] text-[#004ac6] font-geist text-[14px] font-medium leading-[1] tracking-[0.01em] px-8 py-4 rounded-lg shadow-lg hover:bg-[#f8f9ff] transition-colors duration-200">
-                Get Started for Free
+            <h1 className="font-geist text-5xl font-semibold leading-[1.04] tracking-[-0.055em] sm:text-6xl lg:text-[4.35rem]">
+              Make every
+              <span className="block bg-gradient-to-r from-[#004ac6] via-[#3659d9] to-[#7854d8] bg-clip-text pb-2 text-transparent">vote count.</span>
+            </h1>
+            <p className="mt-6 max-w-xl text-base leading-7 text-[#535c70] sm:text-lg sm:leading-8">
+              Bring your poll, your voters, and your results together. VoteFlow makes it easier to run a contest and easier for your community to take part.
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Link href="/register" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#004ac6] px-6 text-sm font-semibold text-white shadow-lg shadow-[#004ac6]/20 transition hover:-translate-y-0.5 hover:bg-[#003ea8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#004ac6] focus-visible:ring-offset-2">
+                Create your account <ArrowRight className="h-4 w-4" />
               </Link>
-              <button className="border border-[#ffffff]/30 text-[#ffffff] font-geist text-[14px] font-medium leading-[1] tracking-[0.01em] px-8 py-4 rounded-lg hover:bg-[#ffffff]/10 transition-colors duration-200">
-                Talk to Sales
-              </button>
+              <Link href="/polls" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-[#c3c6d7] bg-white/80 px-6 text-sm font-semibold text-[#17243b] transition hover:border-[#8ca7df] hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#004ac6] focus-visible:ring-offset-2">
+                Explore public polls
+              </Link>
+            </div>
+            <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-[#535c70]">
+              <span className="inline-flex items-center gap-2"><Check className="h-4 w-4 text-[#16804a]" /> Start with a free account</span>
+              <span className="inline-flex items-center gap-2"><Clock3 className="h-4 w-4 text-[#004ac6]" /> Set a clear closing time</span>
             </div>
           </div>
-        </section>
-      </div>
-    </>
+
+          <div className="relative mx-auto w-full max-w-[570px]">
+            <div aria-hidden="true" className="absolute -inset-5 rounded-[2rem] bg-gradient-to-br from-[#c4d5ff] via-[#eeeaff] to-[#b4c5ff] opacity-70 blur-2xl" />
+            <div className="relative rounded-[1.6rem] border border-white/90 bg-white p-3 shadow-[0_28px_90px_-36px_rgba(22,48,105,0.45)] sm:p-5">
+              <div className="flex items-center justify-between border-b border-[#e9ebf3] px-2 pb-4">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#e5eeff] text-[#004ac6]"><Vote className="h-5 w-5" /></div>
+                  <div><p className="text-sm font-semibold">Poll preview</p><p className="text-xs text-[#737686]">A sample voter view</p></div>
+                </div>
+                <span className="rounded-full bg-[#e9f8ef] px-2.5 py-1 text-[11px] font-semibold text-[#16804a]">OPEN</span>
+              </div>
+              <div className="p-2 pt-5 sm:p-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#737686]">Community choice</p>
+                <h2 className="mt-2 font-geist text-2xl font-semibold tracking-[-0.035em] sm:text-[1.8rem]">Where should we meet next?</h2>
+                <p className="mt-2 text-sm leading-6 text-[#737686]">Choose the option that works best for you.</p>
+                <div className="mt-6 space-y-3">
+                  {[
+                    { name: "The waterfront", detail: "Easy to reach · Outdoor space", style: "border-[#8daeff] bg-[#f3f7ff]" },
+                    { name: "The art district", detail: "Close to transit · Lots to explore", style: "border-[#e6e8ef] bg-white" },
+                    { name: "The garden hall", detail: "Quiet setting · Accessible venue", style: "border-[#e6e8ef] bg-white" },
+                  ].map((option, index) => (
+                    <div key={option.name} className={`flex items-center gap-3 rounded-xl border p-3.5 transition sm:p-4 ${option.style}`}>
+                      <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${index === 0 ? "border-[#004ac6]" : "border-[#c3c6d7] bg-white"}`}>
+                        {index === 0 && <span className="h-2.5 w-2.5 rounded-full bg-[#004ac6]" />}
+                      </span>
+                      <span className="min-w-0 flex-1"><span className="block text-sm font-semibold">{option.name}</span><span className="mt-1 block text-xs text-[#737686]">{option.detail}</span></span>
+                    </div>
+                  ))}
+                </div>
+                <button type="button" disabled className="mt-5 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#004ac6] text-sm font-semibold text-white opacity-90">
+                  Cast your vote <ArrowRight className="h-4 w-4" />
+                </button>
+                <p className="mt-3 text-center text-[11px] text-[#85899a]">Example poll preview</p>
+              </div>
+              <div className="absolute -right-5 top-24 hidden items-center gap-2 rounded-xl border border-[#e9ebf3] bg-white px-3 py-2.5 shadow-lg sm:flex">
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#e9f8ef] text-[#16804a]"><Check className="h-4 w-4" /></span>
+                <span><span className="block text-xs font-semibold">Your choice is clear</span><span className="block text-[10px] text-[#737686]">One simple voter flow</span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="how-it-works" className="border-y border-[#e5e8f1] bg-white px-4 py-20 sm:px-8 lg:px-12">
+        <div className="mx-auto max-w-7xl">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#004ac6]">A straightforward flow</p>
+            <h2 className="mt-3 font-geist text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">From first question to final result</h2>
+            <p className="mt-4 text-base leading-7 text-[#626b7d]">Everything stays organized as your poll moves from setup to participation.</p>
+          </div>
+          <div className="mt-12 grid gap-5 md:grid-cols-3">
+            {steps.map(({ number, title, description, icon: Icon }) => (
+              <article key={number} className="relative rounded-2xl border border-[#e5e8f1] bg-[#fbfcff] p-6 sm:p-7">
+                <div className="flex items-center justify-between"><span className="font-geist text-sm font-semibold tracking-[0.12em] text-[#8b91a1]">{number}</span><span className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#e5eeff] text-[#004ac6]"><Icon className="h-5 w-5" /></span></div>
+                <h3 className="mt-6 text-lg font-semibold">{title}</h3>
+                <p className="mt-2 text-sm leading-6 text-[#626b7d]">{description}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="features" className="px-4 py-20 sm:px-8 lg:px-12">
+        <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#004ac6]">Made for participation</p>
+            <h2 className="mt-3 font-geist text-3xl font-semibold leading-tight tracking-[-0.04em] sm:text-4xl">Less time managing the process. More time listening to the people.</h2>
+            <p className="mt-5 max-w-lg text-base leading-7 text-[#626b7d]">Whether you are gathering opinions or running a public contest, VoteFlow gives organizers and voters a shared, easy-to-follow experience.</p>
+            <Link href="/polls" className="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-[#004ac6] hover:gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#004ac6] focus-visible:ring-offset-4">
+              See polls open to the public <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {features.map(({ title, description, icon: Icon }, index) => (
+              <article key={title} className={`rounded-2xl border border-[#e5e8f1] p-6 ${index === 0 ? "bg-[#eef4ff] sm:col-span-2" : "bg-white"}`}>
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-[#004ac6] shadow-sm"><Icon className="h-5 w-5" /></span>
+                <h3 className="mt-5 font-semibold">{title}</h3>
+                <p className="mt-2 max-w-lg text-sm leading-6 text-[#626b7d]">{description}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="px-4 pb-20 sm:px-8 lg:px-12">
+        <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[1.75rem] bg-[#071b3c] px-6 py-12 text-white sm:px-12 sm:py-16">
+          <div aria-hidden="true" className="absolute -right-20 -top-40 h-96 w-96 rounded-full bg-[#315ed5]/35 blur-3xl" />
+          <div className="relative flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
+            <div className="max-w-2xl"><p className="text-xs font-bold uppercase tracking-[0.18em] text-[#b4c5ff]">Ready when you are</p><h2 className="mt-3 font-geist text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">Give your next poll a better home.</h2><p className="mt-4 max-w-xl text-sm leading-6 text-[#d4dcf2] sm:text-base">Create an account to set up your poll, or browse public polls and join a vote already in progress.</p></div>
+            <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
+              <Link href="/register" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-white px-5 text-sm font-semibold text-[#0b1c30] transition hover:bg-[#eef2ff]">Get started <ArrowRight className="h-4 w-4" /></Link>
+              <Link href="/polls" className="inline-flex min-h-12 items-center justify-center rounded-xl border border-white/25 px-5 text-sm font-semibold text-white transition hover:bg-white/10">Browse polls</Link>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
   );
 }

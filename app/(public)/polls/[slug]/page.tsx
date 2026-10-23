@@ -8,6 +8,7 @@ import { usePoll } from "@/lib/hooks/usePoll";
 import { ContestantCard } from "@/components/contestant-card";
 import { useAuthStore } from "@/lib/stores/auth";
 import { AddContestantModal } from "@/components/add-contestant-modal";
+import { CustomSelect } from "@/components/ui/custom-select";
 
 function useCountdown(endsAt: string | undefined) {
   const [parts, setParts] = useState({ days: 0, hours: 0, mins: 0, secs: 0 });
@@ -228,10 +229,13 @@ export default function PollDetailPage() {
               </div>
               <div className="flex items-center gap-2">
                 <span className="font-inter text-[13px] text-[#737686]">Sort by:</span>
-                <select value={sortMode} onChange={(event) => setSortMode(event.target.value as "votes" | "alphabetical")} className="bg-white border border-[#c3c6d7] rounded-lg font-inter text-[13px] text-[#0b1c30] py-1.5 px-3 focus:ring-2 focus:ring-[#004ac6]/20 focus:border-[#004ac6] outline-none cursor-pointer">
-                  <option value="votes">Most Votes</option>
-                  <option value="alphabetical">Alphabetical</option>
-                </select>
+                <CustomSelect
+                  aria-label="Sort contestants"
+                  value={sortMode}
+                  onValueChange={(value) => setSortMode(value as "votes" | "alphabetical")}
+                  options={[{ value: "votes", label: "Most Votes" }, { value: "alphabetical", label: "Alphabetical" }]}
+                  className="min-w-36 rounded-lg border border-[#c3c6d7] bg-white px-3 py-1.5 text-left font-inter text-[13px] text-[#0b1c30] outline-none focus-visible:border-[#004ac6] focus-visible:ring-2 focus-visible:ring-[#004ac6]/20"
+                />
               </div>
             </div>
 

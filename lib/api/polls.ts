@@ -1,6 +1,21 @@
 import { apiClient, normalizePaginatedResponse } from "./client";
 import type { Poll, PollFilters, PaginatedResponse, Contestant } from "@/lib/types";
 
+interface InlineVoteCheckoutPayload {
+  contestant_id: string;
+  quantity: number;
+  email: string;
+}
+
+interface InlineVoteCheckoutResponse {
+  payment_id: string;
+  reference: string;
+  amount: string;
+  amount_minor: number;
+  currency: string;
+  public_key: string;
+}
+
 // ─── Polls ────────────────────────────────────────────────────
 
 export const pollsApi = {
@@ -28,6 +43,14 @@ export const pollsApi = {
   /** GET /polls/:slug/ */
   get: (slug: string) =>
     apiClient.get<Poll>(`/polls/${slug}/`, { public: true }),
+
+  /** POST /polls/:slug/checkout/ — server-priced payment reference for InlineJS. */
+  initializeVoteCheckout: (slug: string, payload: InlineVoteCheckoutPayload) =>
+    apiClient.post<InlineVoteCheckoutResponse, InlineVoteCheckoutPayload>(
+      `/polls/${slug}/checkout/`,
+      payload,
+      { public: true },
+    ),
 
   /** POST /polls/ */
   create: (data: Partial<Poll> | FormData) =>

@@ -14,6 +14,7 @@ import { POLL_CATEGORIES } from "@/lib/constants";
 import { useCreatePoll } from "@/lib/hooks/usePolls";
 import { authApi } from "@/lib/api/auth";
 import { useCurrentUser } from "@/lib/hooks/useCurrentUser";
+import { CustomSelect } from "@/components/ui/custom-select";
 
 export default function CreatePollPage() {
   const router = useRouter();
@@ -218,22 +219,13 @@ export default function CreatePollPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="category">Category</Label>
-                <div className="relative">
-                  <select
-                    id="category"
-                    value={pollData.category}
-                    onChange={(e) => setPollData({...pollData, category: e.target.value})}
-                    className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 appearance-none"
-                  >
-                    <option value="" disabled>Select a category...</option>
-                    {POLL_CATEGORIES.map((cat) => (
-                      <option key={cat} value={cat}>{cat}</option>
-                    ))}
-                  </select>
-                  <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none text-[18px]">
-                    expand_more
-                  </span>
-                </div>
+                <CustomSelect
+                  id="category"
+                  value={pollData.category}
+                  placeholder="Select a category..."
+                  options={POLL_CATEGORIES.filter((category) => category !== "All Categories").map((category) => ({ value: category, label: category }))}
+                  onValueChange={(category) => setPollData({ ...pollData, category })}
+                />
               </div>
 
               <div className="space-y-2">

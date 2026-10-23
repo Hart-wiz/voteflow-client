@@ -4,7 +4,7 @@
 
 The VoteFlow client is wired to the Django API for the current product flows. Authentication, poll browsing and creation, voting, wallet actions, notifications, results, and organizer review use live API functions. Paid voting opens Paystack and the server verifies payment before recording votes. Transactional email is sent by the server through Resend.
 
-The client production build completed successfully. The server configuration check passed. No database migrations have been run and no external services have been configured in this workspace, so follow the [server setup guide](../../voteflow-server/SETUP.md) before running the full application.
+The earlier production build and server configuration checks preceded the InlineJS v2 and Dragonfly changes, which were not run through tests or a build in this turn. Paid checkout requires the server environment and a reachable Paystack account; the app also needs the database and Dragonfly connections described in the [server setup guide](../../voteflow-server/SETUP.md). These payment and queue changes add no database migrations.
 
 ## Remaining work
 
@@ -27,4 +27,4 @@ The client production build completed successfully. The server configuration che
 
 ## Environment variables
 
-The client needs `NEXT_PUBLIC_API_URL` and, for paid voting, `NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY`. The backend also needs PostgreSQL, Resend, and Paystack configuration; optional Cloudinary variables enable persistent hosted image uploads. The server setup guide documents every variable and startup step.
+The client needs `NEXT_PUBLIC_API_URL`. For paid voting, the backend needs both Paystack keys; the checkout endpoint returns its public key and server-calculated transaction details to InlineJS. The backend also needs PostgreSQL, Resend, and Dragonfly for shared cache and Celery; optional Cloudinary variables enable persistent hosted image uploads. The server setup guide documents every variable and startup step.

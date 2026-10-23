@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Script from "next/script";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,7 +9,35 @@ import { Label } from "@/components/ui/label";
 import { Minus, Plus, CreditCard, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useVote } from "@/lib/hooks/useVote";
+import { pollsApi } from "@/lib/api/polls";
 import type { Contestant, Poll } from "@/lib/types";
+
+interface PaystackTransaction {
+  reference?: string;
+  trxref?: string;
+  trans?: string;
+}
+
+interface PaystackTransactionOptions {
+  key: string;
+  email: string;
+  amount: number;
+  currency: string;
+  reference: string;
+  onSuccess: (transaction: PaystackTransaction) => void;
+  onCancel: () => void;
+  onError: (error: Error) => void;
+}
+
+interface PaystackPopup {
+  newTransaction: (options: PaystackTransactionOptions) => void;
+}
+
+declare global {
+  interface Window {
+    PaystackPop?: new () => PaystackPopup;
+  }
+}
 
 interface VoteCheckoutModalProps {
   isOpen: boolean;
@@ -21,14 +50,18 @@ export function VoteCheckoutModal({ isOpen, onClose, contestant, poll }: VoteChe
   const [quantity, setQuantity] = useState(1);
   const [email, setEmail] = useState("");
   const [isInitializingPayment, setIsInitializingPayment] = useState(false);
+  const [isPaystackOpen, setIsPaystackOpen] = useState(false);
+  const [isPaystackReady, setIsPaystackReady] = useState(false);
+  const [pendingPaymentRef, setPendingPaymentRef] = useState<string | null>(null);
+  const [checkoutAmount, setCheckoutAmount] = useState<string | null>(null);
   
   const voteMutation = useVote();
-  const isProcessing = voteMutation.isPending || isInitializingPayment;
+  const isProcessing = voteMutation.isPending || isInitializingPayment || isPaystackOpen;
 
   const isFree = !poll.isPaid || poll.pricePerVote === undefined || poll.pricePerVote === 0;
   const total = isFree ? 0 : quantity * (poll.pricePerVote || 0);
 
-  const submitVote = async (payment_ref?: string) => {
+  const submitVote = async (payment_ref?: string, paidAmount?: string) => {
     try {
       await voteMutation.mutateAsync({
         slug: poll.slug,
@@ -41,11 +74,15 @@ export function VoteCheckoutModal({ isOpen, onClose, contestant, poll }: VoteChe
       });
 
       toast.success(`Successfully cast ${quantity} vote(s) for ${contestant.name}!`, {
-        description: isFree ? "Thank you for voting." : `Payment of $${total.toFixed(2)} processed.`,
+        description: isFree
+          ? "Thank you for voting."
+          : `Payment of ₦${Number(paidAmount ?? checkoutAmount ?? total).toFixed(2)} processed.`,
       });
       onClose();
       setQuantity(1);
       setEmail("");
+      setPendingPaymentRef(null);
+      setCheckoutAmount(null);
     } catch (err: unknown) {
       toast.error("Failed to cast vote", {
         description: err instanceof Error ? err.message : "An unexpected error occurred.",
@@ -54,6 +91,11 @@ export function VoteCheckoutModal({ isOpen, onClose, contestant, poll }: VoteChe
   };
 
   const handleVote = async () => {
+    if (pendingPaymentRef) {
+      await submitVote(pendingPaymentRef, checkoutAmount ?? undefined);
+      return;
+    }
+
     if (!isFree && !email) {
       toast.error("Please enter your email to receive a receipt.");
       return;
@@ -63,124 +105,144 @@ export function VoteCheckoutModal({ isOpen, onClose, contestant, poll }: VoteChe
       await submitVote();
     } else {
       setIsInitializingPayment(true);
-      
-      // Dynamically load Paystack Inline script if not already loaded
-      if (typeof window !== "undefined" && !(window as any).PaystackPop) {
-        try {
-          await new Promise<void>((resolve, reject) => {
-            const script = document.createElement("script");
-            script.src = "https://js.paystack.co/v1/inline.js";
-            script.async = true;
-            script.onload = () => resolve();
-            script.onerror = () => reject(new Error("Could not load Paystack"));
-            document.body.appendChild(script);
-          });
-        } catch {
-          toast.error("Failed to load payment gateway. Please check your connection.");
-          setIsInitializingPayment(false);
-          return;
+      try {
+        if (!window.PaystackPop) {
+          throw new Error("The Paystack checkout is still loading. Please try again.");
         }
-      }
 
-      setIsInitializingPayment(false);
-
-      if (typeof window !== "undefined" && (window as any).PaystackPop) {
-        const publicKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY;
-        if (!publicKey) {
-          toast.error("Online payment is not configured yet.");
-          return;
-        }
-        const handler = (window as any).PaystackPop.setup({
-          key: publicKey,
+        const checkout = await pollsApi.initializeVoteCheckout(poll.slug, {
+          contestant_id: contestant.id,
+          quantity,
           email,
-          amount: total * 100, // Amount in kobo/cents
-          ref: `vote_${new Date().getTime()}`,
-          callback: function (response: { reference: string; trans: string }) {
-            void submitVote(response.reference || response.trans);
+        });
+        setCheckoutAmount(checkout.amount);
+        const popup = new window.PaystackPop();
+        setIsPaystackOpen(true);
+        popup.newTransaction({
+          key: checkout.public_key,
+          email,
+          amount: checkout.amount_minor,
+          currency: checkout.currency,
+          reference: checkout.reference,
+          onSuccess: (response) => {
+            const reference = response.reference || response.trxref || checkout.reference;
+            setIsPaystackOpen(false);
+            setPendingPaymentRef(reference);
+            void submitVote(reference, checkout.amount);
           },
-          onClose: function () {
+          onCancel: () => {
+            setIsPaystackOpen(false);
             toast.info("Payment cancelled.");
           },
+          onError: (error) => {
+            setIsPaystackOpen(false);
+            toast.error(error.message || "Paystack could not open checkout.");
+          },
         });
-        handler.openIframe();
+      } catch (err: unknown) {
+        setIsPaystackOpen(false);
+        toast.error("Could not start payment", {
+          description: err instanceof Error ? err.message : "Please try again.",
+        });
+      } finally {
+        setIsInitializingPayment(false);
       }
     }
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Vote for {contestant.name}</DialogTitle>
-          <DialogDescription>
-            {poll.title}
-          </DialogDescription>
-        </DialogHeader>
+    <>
+      {isOpen && !isFree && (
+        <Script
+          src="https://js.paystack.co/v2/inline.js"
+          strategy="afterInteractive"
+          onReady={() => setIsPaystackReady(true)}
+          onError={() => {
+            setIsPaystackReady(false);
+            toast.error("Failed to load Paystack. Please check your connection.");
+          }}
+        />
+      )}
+      <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Vote for {contestant.name}</DialogTitle>
+            <DialogDescription>{poll.title}</DialogDescription>
+          </DialogHeader>
 
-        <div className="grid gap-6 py-4">
-          <div className="flex flex-col gap-4">
-            <Label>Number of Votes</Label>
-            <div className="flex items-center gap-4">
-              <Button 
-                variant="outline" 
-                size="icon" 
-                onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                disabled={quantity <= 1 || isProcessing}
-              >
-                <Minus className="h-4 w-4" />
-              </Button>
-              <div className="text-2xl font-bold w-12 text-center">{quantity}</div>
-              <Button 
-                variant="outline" 
-                size="icon" 
-                onClick={() => setQuantity(quantity + 1)}
-                disabled={isProcessing || quantity >= 1000}
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
+          <div className="grid gap-6 py-4">
+            <div className="flex flex-col gap-4">
+              <Label>Number of Votes</Label>
+              <div className="flex items-center gap-4">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  disabled={quantity <= 1 || isProcessing}
+                >
+                  <Minus className="h-4 w-4" />
+                </Button>
+                <div className="text-2xl font-bold w-12 text-center">{quantity}</div>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setQuantity(quantity + 1)}
+                  disabled={isProcessing || quantity >= 1000}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
-          </div>
 
-          {!isFree && (
-            <div className="flex flex-col gap-3">
-              <Label htmlFor="email">Email address</Label>
-              <Input 
-                id="email" 
-                type="email" 
-                placeholder="you@example.com" 
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                disabled={isProcessing}
-              />
-            </div>
-          )}
-
-          <div className="bg-muted p-4 rounded-lg flex justify-between items-center">
-            <span className="font-medium">Total</span>
-            <span className="text-xl font-bold">
-              {isFree ? "Free" : `₦${total.toLocaleString("en-NG", { minimumFractionDigits: 2 })}`}
-            </span>
-          </div>
-        </div>
-
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose} disabled={isProcessing}>
-            Cancel
-          </Button>
-          <Button onClick={handleVote} disabled={isProcessing} className="w-full sm:w-auto">
-            {isProcessing ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : isFree ? (
-              "Cast Vote"
-            ) : (
-              <>
-                <CreditCard className="mr-2 h-4 w-4" />
-                Pay & Vote
-              </>
+            {!isFree && (
+              <div className="flex flex-col gap-3">
+                <Label htmlFor="email">Email address</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={isProcessing}
+                />
+              </div>
             )}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+
+            <div className="bg-muted p-4 rounded-lg flex justify-between items-center">
+              <span className="font-medium">Total</span>
+              <span className="text-xl font-bold">
+                {isFree ? "Free" : `₦${total.toLocaleString("en-NG", { minimumFractionDigits: 2 })}`}
+              </span>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={onClose} disabled={isProcessing}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleVote}
+              disabled={isProcessing || (!isFree && !pendingPaymentRef && !isPaystackReady)}
+              className="w-full sm:w-auto"
+            >
+              {isProcessing ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : pendingPaymentRef ? (
+                "Retry vote confirmation"
+              ) : isFree ? (
+                "Cast Vote"
+              ) : !isPaystackReady ? (
+                "Loading payment..."
+              ) : (
+                <>
+                  <CreditCard className="mr-2 h-4 w-4" />
+                  Pay & Vote
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

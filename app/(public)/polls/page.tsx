@@ -7,6 +7,7 @@ import { POLL_CATEGORIES } from "@/lib/constants";
 import { PollCard } from "@/components/poll-card";
 import { usePolls } from "@/lib/hooks/usePolls";
 import type { PollStatus } from "@/lib/types";
+import { CustomSelect } from "@/components/ui/custom-select";
 
 // NOTE: metadata can't be exported from a client component.
 // For SEO, this page should ideally be a Server Component with a
@@ -92,23 +93,13 @@ export default function DiscoverPage() {
               >
                 Category
               </label>
-              <div className="relative">
-                <select
-                  id="category-filter"
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-full px-4 py-2.5 bg-white border border-[#c3c6d7] rounded-lg focus:ring-2 focus:ring-[#004ac6]/20 focus:border-[#004ac6] outline-none appearance-none font-inter text-[15px] text-[#0b1c30] cursor-pointer"
-                >
-                  {POLL_CATEGORIES.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat}
-                    </option>
-                  ))}
-                </select>
-                <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[#737686] pointer-events-none text-[18px]">
-                  expand_more
-                </span>
-              </div>
+              <CustomSelect
+                id="category-filter"
+                value={selectedCategory}
+                options={POLL_CATEGORIES.map((category) => ({ value: category, label: category }))}
+                onValueChange={setSelectedCategory}
+                className="w-full rounded-lg border border-[#c3c6d7] bg-white px-4 py-2.5 text-left font-inter text-[15px] text-[#0b1c30] outline-none transition focus-visible:border-[#004ac6] focus-visible:ring-2 focus-visible:ring-[#004ac6]/20"
+              />
             </div>
 
             {/* Status Toggle */}

@@ -1,23 +1,25 @@
-"use client"
-import React, { useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { toast } from 'sonner';
-import { useAuthStore } from '@/lib/stores/auth';
+"use client";
 
-import { Footer } from '@/components/layout/Footer';
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { toast } from "sonner";
+import { ArrowRight, BarChart3, Eye, EyeOff, ShieldCheck, Vote } from "lucide-react";
+import { useAuthStore } from "@/lib/stores/auth";
 
 const registerSchema = z.object({
-  name: z.string().min(2, "Full name is required."),
-  email: z.string().email("Please enter a valid email address."),
+  name: z.string().trim().min(2, "Enter your name (at least 2 characters)."),
+  email: z.string().email("Enter a valid email address."),
   organization: z.string().optional(),
   password: z.string().min(12, "Password must be at least 12 characters."),
 });
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
+
+const inputClass = "w-full rounded-xl border border-[#dfe3ec] bg-white px-4 py-3 text-sm text-[#0b1c30] outline-none transition placeholder:text-[#a0a5b3] focus:border-[#4675d8] focus:ring-4 focus:ring-[#4675d8]/10";
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -35,200 +37,116 @@ export default function RegisterPage() {
 
   const onSubmit = async (data: RegisterFormValues) => {
     try {
+      const organization = data.organization?.trim();
       await registerAction({
-        name: data.name,
-        email: data.email,
-        organization: data.organization,
+        name: data.name.trim(),
+        email: data.email.trim(),
+        organization,
         password: data.password,
       });
-      toast.success(data.organization ? "Account created. Organizer access is pending admin approval." : "Account created successfully!");
+      toast.success(
+        organization
+          ? "Account created. Your organizer access request is pending review."
+          : "Your VoteFlow account is ready.",
+      );
       router.push("/dashboard");
-    } catch (error: any) {
-      toast.error(error.message || "Failed to create account. Please try again.");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Unable to create your account. Please try again.");
     }
   };
 
   return (
-    <>
-      {/* Main Layout Wrapper */}
-      <div className="bg-[#f8f9ff] text-[#0b1c30] min-h-screen flex flex-col font-inter">
+    <main className="min-h-screen bg-[#f8f9ff] text-[#0b1c30] lg:grid lg:grid-cols-[0.92fr_1.08fr]">
+      <section className="relative isolate overflow-hidden bg-[#071b3c] px-6 py-8 text-white sm:px-10 sm:py-10 lg:flex lg:min-h-screen lg:flex-col lg:justify-between lg:px-14 lg:py-12">
+        <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_18%_10%,rgba(48,101,222,0.52),transparent_42%),radial-gradient(ellipse_at_95%_90%,rgba(112,66,211,0.28),transparent_42%)]" />
+        <div className="mx-auto w-full max-w-xl lg:my-auto lg:py-10">
+          <Link href="/" className="inline-flex items-center gap-2.5 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-[#c7d6ff]"><Vote className="h-5 w-5" /></span>
+            <span className="font-geist text-xl font-semibold tracking-tight">VoteFlow</span>
+          </Link>
 
+          <p className="mt-12 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] px-3 py-1.5 text-xs font-medium text-[#d4dcf2] sm:mt-16">
+            <ShieldCheck className="h-3.5 w-3.5 text-[#b4c5ff]" />
+            One account for voters and organizers
+          </p>
+          <h1 className="mt-5 max-w-xl font-geist text-4xl font-semibold leading-[1.08] tracking-[-0.045em] sm:text-5xl">
+            Make space for every voice.
+          </h1>
+          <p className="mt-5 max-w-lg text-sm leading-7 text-[#c6d0e7] sm:text-base">
+            Join a poll as a voter, or request organizer access to create and manage your own campaigns.
+          </p>
 
-
-        {/* Main Content: Split Screen Layout */}
-        <main className="flex-grow flex flex-col md:flex-row w-full max-w-[1440px] mx-auto overflow-hidden">
-
-          {/* Left Side: Visual & Trust Indicators */}
-          <div className="hidden lg:flex w-1/2 relative flex-col justify-center px-24 bg-[#eff4ff] overflow-hidden">
-            {/* Background Decoration */}
-            <div className="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none"></div>
-
-            <div className="relative z-10">
-              <div className="inline-flex items-center gap-[4px] px-[8px] py-[4px] bg-[#2563eb]/10 text-[#b4c5ff] rounded-full mb-[24px] border border-[#004ac6]/10">
-                <span className="material-symbols-outlined text-[18px]">verified</span>
-                <span className="font-geist text-[12px] leading-[1] font-semibold">ISO 27001 Certified Infrastructure</span>
-              </div>
-
-              <h1 className="font-geist text-[48px] leading-[1.1] tracking-[-0.02em] font-bold mb-[16px] text-[#0b1c30]">
-                Precision for high-stakes governance.
-              </h1>
-              <p className="font-inter text-[18px] leading-[1.6] font-normal text-[#434655] mb-[40px] max-w-lg">
-                Join 10,000+ world-class organizations using VoteFlow for secure, fluid, and legally binding digital elections.
-              </p>
-
-              <div className="grid grid-cols-2 gap-[24px]">
-                <div className="flex items-center gap-[8px]">
-                  <div className="w-10 h-10 rounded-full bg-[#ffffff] flex items-center justify-center shadow-sm">
-                    <span className="material-symbols-outlined text-[#004ac6]">security</span>
-                  </div>
-                  <div>
-                    <p className="font-geist text-[14px] leading-[1] tracking-[0.01em] font-medium text-[#0b1c30]">End-to-End Encryption</p>
-                    <p className="font-inter text-[14px] leading-[1.5] text-[#434655]">Zero-knowledge proof systems</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-[8px]">
-                  <div className="w-10 h-10 rounded-full bg-[#ffffff] flex items-center justify-center shadow-sm">
-                    <span className="material-symbols-outlined text-[#004ac6]">speed</span>
-                  </div>
-                  <div>
-                    <p className="font-geist text-[14px] leading-[1] tracking-[0.01em] font-medium text-[#0b1c30]">Real-time Audits</p>
-                    <p className="font-inter text-[14px] leading-[1.5] text-[#434655]">Instant, verifiable results</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-[64px] flex items-center gap-[16px]">
-                <div className="flex -space-x-2">
-                  <img className="w-10 h-10 rounded-full border-2 border-[#ffffff] object-cover" alt="Portrait 1" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYtBF-rh6ZahdBFKoTMfkm5a1P-DCnYQAl4zFt7OnsJhabBal6VX3IcVMTYIjHhrWmSlI8MFbqS_ZNaRuckh5ubJ7tlLbctyYo8IsQ0_LdagfGpLkRXYjUc3oQXPT8bmpew-D0jMzzM4dZF1FVGdwj6K2d_6ra_2jibWvORpfzSR7Bc0u8Et3jAvlR9AVmpn_4z3ZSqmyie0zpqaUpQQbzlTsAuJavyZc5fo3LwNUbWZyt32KoL_qo" />
-                  <img className="w-10 h-10 rounded-full border-2 border-[#ffffff] object-cover" alt="Portrait 2" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAV_2YllsQKWtUxn2w9QlVThUl7muipi5rg7BN3DPDAoQKCJQam6fGqau-N1YH4p3ob4y1lRbva6tqkJsZZsgAyr4ohXc5CS7DVMBawQUxyXEoMwaE0uTFdqEBoUZOfe0yBvmKmLeklHbJNwl1pO6O_udpCwwCjuMG8q1CK99L-WV_fu0pRvFJhG3rDwDPYLoiMbmlSNYCI5e0G2rRfvSiMEdOC2kfb6yZeU3bdDVJSEkF1YwIcaT4b" />
-                  <img className="w-10 h-10 rounded-full border-2 border-[#ffffff] object-cover" alt="Portrait 3" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBIvRysnI0Vd1vPyhpXTd0k56cTSKQX_YZtF_Hhpo8hvkXew8o983GesIzYV3s7uXrzwChX2-blzbPMQUEDzHI9nY-laXhLm-3z3t6lf4m7VnCZGywYrbVIcYVuubbhgaUCT__E62dJRJWl1xK9wucK8SrgD7vRhybLDhpcaq9eTUqAuADSZ00LqUsgN-OFF9hc9_vXurqj1tx9BtfP_al5Ql-jyjqmWnYwV7n24kKNzvilEYV5Vj84" />
-                </div>
-                <p className="font-inter text-[14px] leading-[1.5] text-[#434655]">Trusted by the world's leading boards.</p>
-              </div>
+          <div className="mt-9 grid gap-3 sm:grid-cols-2">
+            <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-4">
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 text-[#b4c5ff]"><Vote className="h-4 w-4" /></span>
+              <p className="mt-4 text-sm font-semibold">Vote with clarity</p>
+              <p className="mt-1 text-xs leading-5 text-[#c6d0e7]">Find public polls and see the choices before you participate.</p>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-4">
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 text-[#d4c3ff]"><BarChart3 className="h-4 w-4" /></span>
+              <p className="mt-4 text-sm font-semibold">Manage your polls</p>
+              <p className="mt-1 text-xs leading-5 text-[#c6d0e7]">Keep campaigns and results together in your organizer workspace.</p>
             </div>
           </div>
+          <div className="mt-8 flex items-start gap-3 rounded-xl border border-white/10 bg-black/10 p-4 text-xs leading-5 text-[#c6d0e7]">
+            <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#b4c5ff]" />
+            <p>Organizer access is reviewed before an account can create and publish polls. You can also request access after signing up.</p>
+          </div>
+        </div>
+        <p className="hidden text-xs text-[#92a1c2] lg:block">VoteFlow · Polls and community voting</p>
+      </section>
 
-          {/* Right Side: Registration Form */}
-          <div className="w-full lg:w-1/2 flex items-center justify-center p-[16px] md:p-[40px] bg-[#f8f9ff]">
-            <div className="w-full max-w-md">
+      <section className="flex items-center justify-center px-4 py-12 sm:px-8 sm:py-16 lg:px-12">
+        <div className="w-full max-w-[470px]">
+          <div className="mb-8">
+            <p className="text-xs font-bold uppercase tracking-[0.17em] text-[#004ac6]">Create an account</p>
+            <h2 className="mt-3 font-geist text-3xl font-semibold tracking-[-0.04em] sm:text-[2.15rem]">Start with VoteFlow</h2>
+            <p className="mt-2 text-sm leading-6 text-[#687184]">Create your account to vote or set up a poll.</p>
+          </div>
 
-              <div className="mb-[40px]">
-                <h2 className="font-geist text-[32px] leading-[1.25] tracking-[-0.01em] font-semibold text-[#0b1c30] mb-[4px]">
-                  Get started today
-                </h2>
-                <p className="font-inter text-[16px] leading-[1.5] text-[#434655]">
-                  No credit card required • 14-day free trial
-                </p>
-              </div>
+          <form className="space-y-5" onSubmit={handleSubmit(onSubmit)} noValidate>
+            <div className="space-y-2">
+              <label className="block text-sm font-medium" htmlFor="name">Full name</label>
+              <input {...register("name")} className={inputClass} id="name" autoComplete="name" placeholder="Alex Rivera" aria-invalid={Boolean(errors.name)} aria-describedby={errors.name ? "name-error" : undefined} />
+              {errors.name && <p className="text-xs text-red-600" id="name-error">{errors.name.message}</p>}
+            </div>
 
-              {/* Google Signup */}
-              <button className="w-full flex items-center justify-center gap-[8px] px-[16px] py-[8px] border border-[#c3c6d7] rounded-lg font-geist text-[14px] leading-[1] tracking-[0.01em] font-medium text-[#434655] hover:bg-[#eff4ff] transition-all duration-200 active:scale-[0.98] mb-[24px]">
-                <svg className="w-5 h-5" viewBox="0 0 24 24">
-                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
-                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
-                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path>
-                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 12-4.53z" fill="#EA4335"></path>
-                </svg>
-                Sign up with Google
-              </button>
+            <div className="space-y-2">
+              <label className="block text-sm font-medium" htmlFor="email">Email address</label>
+              <input {...register("email")} className={inputClass} id="email" autoComplete="email" placeholder="you@example.com" type="email" aria-invalid={Boolean(errors.email)} aria-describedby={errors.email ? "email-error" : undefined} />
+              {errors.email && <p className="text-xs text-red-600" id="email-error">{errors.email.message}</p>}
+            </div>
 
-              <div className="relative flex items-center mb-[24px]">
-                <div className="flex-grow border-t border-[#c3c6d7]"></div>
-                <span className="px-[16px] font-geist text-[12px] leading-[1] font-semibold text-[#737686] uppercase tracking-wider">or email</span>
-                <div className="flex-grow border-t border-[#c3c6d7]"></div>
-              </div>
+            <div className="space-y-2">
+              <label className="block text-sm font-medium" htmlFor="organization">Organization <span className="font-normal text-[#85899a]">· optional</span></label>
+              <input {...register("organization")} className={inputClass} id="organization" autoComplete="organization" placeholder="Your organization name" aria-describedby="organization-hint" />
+              <p className="text-xs leading-5 text-[#737686]" id="organization-hint">Add this to request organizer access. Approval is required before you can publish polls.</p>
+            </div>
 
-              <form className="space-y-[24px]" onSubmit={handleSubmit(onSubmit)}>
-
-                {/* Full Name */}
-                <div className="space-y-[4px] group focus-within:scale-[1.01] transition-transform duration-200">
-                  <label className="font-geist text-[14px] leading-[1] tracking-[0.01em] font-medium text-[#0b1c30]" htmlFor="name">Full Name</label>
-                  <input 
-                    {...register("name")}
-                    className={`w-full px-[16px] py-[8px] rounded-lg border ${errors.name ? 'border-red-500' : 'border-[#c3c6d7]'} focus:ring-2 focus:ring-[#004ac6]/20 focus:border-[#004ac6] outline-none transition-all placeholder:text-[#c3c6d7] font-inter text-[16px] leading-[1.5]`} 
-                    id="name" 
-                    placeholder="Alex Rivera" 
-                    type="text" 
-                  />
-                  {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>}
-                </div>
-
-                {/* Work Email */}
-                <div className="space-y-[4px] group focus-within:scale-[1.01] transition-transform duration-200">
-                  <label className="font-geist text-[14px] leading-[1] tracking-[0.01em] font-medium text-[#0b1c30]" htmlFor="email">Work Email</label>
-                  <input 
-                    {...register("email")}
-                    className={`w-full px-[16px] py-[8px] rounded-lg border ${errors.email ? 'border-red-500' : 'border-[#c3c6d7]'} focus:ring-2 focus:ring-[#004ac6]/20 focus:border-[#004ac6] outline-none transition-all placeholder:text-[#c3c6d7] font-inter text-[16px] leading-[1.5]`} 
-                    id="email" 
-                    placeholder="alex@organization.com" 
-                    type="email" 
-                  />
-                  {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
-                </div>
-
-                {/* Organization Name */}
-                <div className="space-y-[4px] group focus-within:scale-[1.01] transition-transform duration-200">
-                  <label className="font-geist text-[14px] leading-[1] tracking-[0.01em] font-medium text-[#0b1c30]" htmlFor="org">Organization Name</label>
-                  <input 
-                    {...register("organization")}
-                    className={`w-full px-[16px] py-[8px] rounded-lg border border-[#c3c6d7] focus:ring-2 focus:ring-[#004ac6]/20 focus:border-[#004ac6] outline-none transition-all placeholder:text-[#c3c6d7] font-inter text-[16px] leading-[1.5]`} 
-                    id="org" 
-                    placeholder="Acme Governance Corp" 
-                    type="text" 
-                  />
-                </div>
-
-                {/* Password Field */}
-                <div className="space-y-[4px] group focus-within:scale-[1.01] transition-transform duration-200">
-                  <label className="font-geist text-[14px] leading-[1] tracking-[0.01em] font-medium text-[#0b1c30]" htmlFor="password">Password</label>
-                  <div className="relative">
-                    <input
-                      {...register("password")}
-                      className={`w-full px-[16px] py-[8px] rounded-lg border ${errors.password ? 'border-red-500' : 'border-[#c3c6d7]'} focus:ring-2 focus:ring-[#004ac6]/20 focus:border-[#004ac6] outline-none transition-all placeholder:text-[#c3c6d7] font-inter text-[16px] leading-[1.5]`}
-                      id="password"
-                      placeholder="••••••••"
-                      type={showPassword ? "text" : "password"}
-                    />
-                    <button
-                      className="absolute right-[16px] top-1/2 -translate-y-1/2 text-[#c3c6d7] hover:text-[#434655] transition-colors"
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      <span className="material-symbols-outlined text-[20px]">
-                        {showPassword ? "visibility_off" : "visibility"}
-                      </span>
-                    </button>
-                  </div>
-                  {errors.password ? (
-                    <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
-                  ) : (
-                    <p className="font-geist text-[12px] leading-[1] font-semibold text-[#c3c6d7]">Must be at least 12 characters.</p>
-                  )}
-                </div>
-
-                <button 
-                  className="w-full cta-gradient text-[#ffffff] font-geist text-[14px] leading-[1] tracking-[0.01em] font-medium py-[16px] rounded-lg shadow-md hover:shadow-lg transition-all duration-200 active:scale-[0.97] mt-[16px] disabled:opacity-70 disabled:cursor-not-allowed"
-                  type="submit"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? 'Creating Account...' : 'Create Account'}
+            <div className="space-y-2">
+              <label className="block text-sm font-medium" htmlFor="password">Password</label>
+              <div className="relative">
+                <input {...register("password")} className={`${inputClass} pr-12`} id="password" autoComplete="new-password" placeholder="At least 12 characters" type={showPassword ? "text" : "password"} aria-invalid={Boolean(errors.password)} aria-describedby={errors.password ? "password-error" : "password-hint"} />
+                <button type="button" onClick={() => setShowPassword((visible) => !visible)} className="absolute inset-y-0 right-0 flex w-12 items-center justify-center rounded-r-xl text-[#737686] transition hover:text-[#0b1c30] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#4675d8]" aria-label={showPassword ? "Hide password" : "Show password"}>
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
-              </form>
-
-              <p className="mt-[40px] text-center font-inter text-[14px] leading-[1.5] text-[#434655]">
-                Already have an account?{' '}
-                <Link className="text-[#004ac6] font-semibold hover:underline" href="/login">Sign In</Link>
-              </p>
-
-              <p className="mt-[16px] text-center font-geist text-[12px] leading-[1.5] font-semibold text-[#c3c6d7]">
-                By creating an account, you agree to our <Link className="underline hover:text-[#434655]" href="#">Terms of Service</Link> and <Link className="underline hover:text-[#434655]" href="#">Privacy Policy</Link>.
-              </p>
+              </div>
+              {errors.password ? <p className="text-xs text-red-600" id="password-error">{errors.password.message}</p> : <p className="text-xs text-[#85899a]" id="password-hint">Use at least 12 characters.</p>}
             </div>
-          </div>
-        </main>
 
-        <Footer />
-      </div>
-    </>
+            <button type="submit" disabled={isSubmitting} className="mt-2 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#004ac6] px-5 text-sm font-semibold text-white shadow-md shadow-[#004ac6]/15 transition hover:-translate-y-0.5 hover:bg-[#003ea8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#004ac6] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60">
+              {isSubmitting ? "Creating your account…" : "Create account"}
+              {!isSubmitting && <ArrowRight className="h-4 w-4" />}
+            </button>
+            <p className="text-center text-xs leading-5 text-[#85899a]">Your account starts with voter access. You can request organizer access whenever you are ready to publish a poll.</p>
+          </form>
+
+          <p className="mt-7 border-t border-[#e5e8f1] pt-6 text-center text-sm text-[#687184]">
+            Already have an account? <Link className="font-semibold text-[#004ac6] hover:underline" href="/login">Sign in</Link>
+          </p>
+          <Link href="/" className="mt-5 block text-center text-xs font-medium text-[#85899a] hover:text-[#004ac6]">Back to VoteFlow home</Link>
+        </div>
+      </section>
+    </main>
   );
 }

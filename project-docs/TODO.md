@@ -10,7 +10,7 @@
 
 ## 🟠 Medium Priority (Core Features)
 
-- [x] **Paystack integration** — Paid votes use the Paystack popup and submit the reference for server verification
+- [x] **Paystack integration** — Paid votes use InlineJS v2 with a server-created payment reference; the server binds and verifies each charge before recording votes
 - [ ] **Results page** — `/results` public listing + `/polls/:slug/results` post-close results
 - [ ] **Vote success page** — `/vote-success` with contestant name, poll title, and share button
 - [x] **Poll creation API call** — Multi-step wizard submits poll, contestant, and image data to the API

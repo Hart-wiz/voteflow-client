@@ -91,7 +91,7 @@ export function VoterDashboard({ user }: { user: User }) {
         <CardContent>
           {requestQuery.isLoading ? <LoadingBlock compact /> : requestQuery.error ? (
             <p className="text-sm text-destructive">Could not check your organizer request. Please refresh and try again.</p>
-          ) : requestPending ? (
+          ) : request && !request.is_approved ? (
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <Badge variant="outline" className="w-fit"><Clock3 className="mr-1.5 h-3.5 w-3.5" /> Pending review</Badge>
               <p className="text-sm text-muted-foreground">Your request for {request.business_name || "organizer access"} was sent on {new Date(request.requested_at).toLocaleDateString()}.</p>

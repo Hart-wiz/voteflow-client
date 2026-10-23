@@ -16,6 +16,19 @@ import {
 import { useWithdraw } from "@/lib/hooks/useWallet";
 import { toast } from "sonner";
 import { ArrowDownToLine, Loader2 } from "lucide-react";
+import { CustomSelect } from "@/components/ui/custom-select";
+
+const banks = [
+  { value: "044", label: "Access Bank" },
+  { value: "050", label: "Ecobank Nigeria" },
+  { value: "070", label: "Fidelity Bank" },
+  { value: "011", label: "First Bank of Nigeria" },
+  { value: "214", label: "First City Monument Bank" },
+  { value: "058", label: "Guaranty Trust Bank (GTB)" },
+  { value: "033", label: "United Bank for Africa (UBA)" },
+  { value: "032", label: "Union Bank of Nigeria" },
+  { value: "057", label: "Zenith Bank" },
+];
 
 export function WithdrawModal({ availableBalance }: { availableBalance: number }) {
   const [open, setOpen] = useState(false);
@@ -108,23 +121,13 @@ export function WithdrawModal({ availableBalance }: { availableBalance: number }
           </div>
           <div className="space-y-2">
             <Label htmlFor="bank">Select Bank</Label>
-            <select
+            <CustomSelect
               id="bank"
               value={bankCode}
-              onChange={(e) => setBankCode(e.target.value)}
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <option value="" disabled>Choose a bank...</option>
-              <option value="044">Access Bank</option>
-              <option value="050">Ecobank Nigeria</option>
-              <option value="070">Fidelity Bank</option>
-              <option value="011">First Bank of Nigeria</option>
-              <option value="214">First City Monument Bank</option>
-              <option value="058">Guaranty Trust Bank (GTB)</option>
-              <option value="033">United Bank for Africa (UBA)</option>
-              <option value="032">Union Bank of Nigeria</option>
-              <option value="057">Zenith Bank</option>
-            </select>
+              onValueChange={setBankCode}
+              options={banks}
+              placeholder="Choose a bank..."
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="account">Account Number</Label>
